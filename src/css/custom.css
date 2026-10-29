@@ -1,0 +1,401 @@
+/**
+ * OpenMT2 documentation theme
+ *
+ * A red-forward palette inspired by dalamud.dev: warm near-black surfaces,
+ * coral-red highlights, and a deep crimson footer.
+ */
+
+/* --------------------------------------------------------------------------
+   Design tokens — light mode
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Warm neutral scale so backgrounds and borders feel cohesive with the red. */
+  --ifm-color-gray-0: #ffffff;
+  --ifm-color-gray-100: #faf3f2;
+  --ifm-color-gray-200: #f2e7e5;
+  --ifm-color-gray-300: #e6d5d2;
+  --ifm-color-gray-400: #d2bcb9;
+  --ifm-color-gray-500: #b09a97;
+  --ifm-color-gray-600: #8c7673;
+  --ifm-color-gray-700: #6b5653;
+  --ifm-color-gray-800: #483633;
+  --ifm-color-gray-900: #2a1e1d;
+  --ifm-color-gray-1000: #000000;
+
+  /* Brand — a deep brick red that stays readable on white. */
+  --ifm-color-primary: #c0342f;
+  --ifm-color-primary-dark: #ad2f2a;
+  --ifm-color-primary-darker: #a32c28;
+  --ifm-color-primary-darkest: #862421;
+  --ifm-color-primary-light: #d33f3a;
+  --ifm-color-primary-lighter: #d54944;
+  --ifm-color-primary-lightest: #e27470;
+  --ifm-color-primary-contrast-background: #fdeceb;
+  --ifm-color-primary-contrast-foreground: #4a0f0d;
+
+  --ifm-background-color: #fffdfd;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-color-content: #2a1e1d;
+  --ifm-color-content-secondary: #6e5a58;
+  --ifm-heading-color: #1f1514;
+  --ifm-font-color-base: var(--ifm-color-content);
+  --ifm-font-color-secondary: var(--ifm-color-content-secondary);
+
+  --ifm-link-color: #b02e2a;
+  --ifm-link-hover-color: #8f231f;
+  --ifm-link-decoration: none;
+
+  --ifm-navbar-background-color: rgba(255, 253, 253, 0.82);
+  --ifm-navbar-shadow: none;
+  --ifm-navbar-link-hover-color: var(--ifm-color-primary);
+
+  --ifm-footer-background-color: #1a0e0f;
+  --ifm-footer-color: #d9cac8;
+  --ifm-footer-link-color: #e8dcdb;
+  --ifm-footer-link-hover-color: #ff8b8b;
+  --ifm-footer-title-color: #ffffff;
+
+  --ifm-menu-color: #5f4b49;
+  --ifm-menu-color-active: var(--ifm-color-primary);
+  --ifm-menu-color-background-active: rgba(192, 52, 47, 0.09);
+  --ifm-menu-color-background-hover: rgba(192, 52, 47, 0.055);
+
+  --ifm-toc-border-color: #ecd9d6;
+  --ifm-toc-link-color: #6e5a58;
+
+  --ifm-table-border-color: #ecd9d6;
+  --ifm-table-stripe-background: rgba(192, 52, 47, 0.035);
+  --ifm-table-head-background: rgba(192, 52, 47, 0.055);
+  --ifm-hover-overlay: rgba(192, 52, 47, 0.06);
+
+  --ifm-code-background: #f8efee;
+  --ifm-code-font-size: 92%;
+  --ifm-blockquote-border-color: var(--ifm-color-primary);
+  --ifm-blockquote-color: #5c4846;
+  --ifm-global-radius: 0.5rem;
+
+  --docusaurus-highlighted-code-line-bg: rgba(192, 52, 47, 0.1);
+
+  --ifm-scrollbar-track-background-color: #f8efee;
+  --ifm-scrollbar-thumb-background-color: #d8c2bf;
+  --ifm-scrollbar-thumb-hover-background-color: #c0342f;
+
+  /* Theme-local helpers. */
+  --openmt2-border: #ecd9d6;
+  --openmt2-glow: rgba(192, 52, 47, 0.16);
+  --openmt2-card-shadow: 0 1px 2px rgba(60, 20, 18, 0.04),
+    0 12px 32px -14px rgba(60, 20, 18, 0.16);
+
+  --ifm-font-family-base: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --ifm-font-family-monospace: "JetBrains Mono", "SFMono-Regular", Menlo,
+    Monaco, Consolas, "Liberation Mono", monospace;
+  --ifm-heading-font-family: var(--ifm-font-family-base);
+  --ifm-heading-font-weight: 700;
+  --ifm-leading-desktop: 1.3;
+}
+
+/* --------------------------------------------------------------------------
+   Design tokens — dark mode
+   -------------------------------------------------------------------------- */
+
+[data-theme='dark'] {
+  --ifm-color-gray-0: #ffffff;
+  --ifm-color-gray-100: #f2eae9;
+  --ifm-color-gray-200: #e0d3d2;
+  --ifm-color-gray-300: #c8b6b4;
+  --ifm-color-gray-400: #a89492;
+  --ifm-color-gray-500: #85706e;
+  --ifm-color-gray-600: #6a5654;
+  --ifm-color-gray-700: #4b3938;
+  --ifm-color-gray-800: #332626;
+  --ifm-color-gray-900: #211818;
+  --ifm-color-gray-1000: #000000;
+
+  /* Brand — coral red, warmer and redder than dalamud's salmon. */
+  --ifm-color-primary: #ff6b6b;
+  --ifm-color-primary-dark: #ff4f4f;
+  --ifm-color-primary-darker: #ff4040;
+  --ifm-color-primary-darkest: #ff1f1f;
+  --ifm-color-primary-light: #ff8787;
+  --ifm-color-primary-lighter: #ff9797;
+  --ifm-color-primary-lightest: #ffc7c7;
+  --ifm-color-primary-contrast-background: #3a1414;
+  --ifm-color-primary-contrast-foreground: #ffe3e3;
+
+  --ifm-background-color: #151011;
+  --ifm-background-surface-color: #1d1617;
+  --ifm-color-content: #ece4e3;
+  --ifm-color-content-secondary: #b8a5a3;
+  --ifm-heading-color: #fbf4f3;
+  --ifm-font-color-base: var(--ifm-color-content);
+  --ifm-font-color-secondary: var(--ifm-color-content-secondary);
+
+  --ifm-link-color: #ff8b8b;
+  --ifm-link-hover-color: #ffb0b0;
+
+  --ifm-navbar-background-color: rgba(21, 16, 17, 0.82);
+  --ifm-footer-background-color: #120a0b;
+  --ifm-footer-color: #d4c2c0;
+  --ifm-footer-link-color: #e6d8d6;
+  --ifm-footer-link-hover-color: #ff8b8b;
+
+  --ifm-menu-color: #b8a5a3;
+  --ifm-menu-color-active: var(--ifm-color-primary);
+  --ifm-menu-color-background-active: rgba(255, 107, 107, 0.12);
+  --ifm-menu-color-background-hover: rgba(255, 107, 107, 0.075);
+
+  --ifm-toc-border-color: #3a2b2b;
+  --ifm-toc-link-color: #b8a5a3;
+
+  --ifm-table-border-color: #3a2b2b;
+  --ifm-table-stripe-background: rgba(255, 255, 255, 0.03);
+  --ifm-table-head-background: rgba(255, 107, 107, 0.07);
+
+  --ifm-code-background: rgba(255, 107, 107, 0.09);
+  --ifm-blockquote-color: #cbb8b6;
+  --ifm-hover-overlay: rgba(255, 107, 107, 0.08);
+
+  --docusaurus-highlighted-code-line-bg: rgba(255, 107, 107, 0.16);
+
+  --ifm-scrollbar-track-background-color: #1d1617;
+  --ifm-scrollbar-thumb-background-color: #4b3938;
+  --ifm-scrollbar-thumb-hover-background-color: #ff6b6b;
+
+  --openmt2-border: #3a2b2b;
+  --openmt2-glow: rgba(255, 107, 107, 0.18);
+  --openmt2-card-shadow: 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 18px 40px -20px rgba(0, 0, 0, 0.8);
+}
+
+/* --------------------------------------------------------------------------
+   Base
+   -------------------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--ifm-background-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(192, 52, 47, 0.22);
+  color: inherit;
+}
+
+[data-theme='dark'] ::selection {
+  background: rgba(255, 107, 107, 0.28);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Navbar
+   -------------------------------------------------------------------------- */
+
+.navbar {
+  border-bottom: 1px solid var(--openmt2-border);
+  backdrop-filter: saturate(160%) blur(14px);
+  -webkit-backdrop-filter: saturate(160%) blur(14px);
+}
+
+.navbar__logo {
+  height: 2rem;
+  width: auto;
+}
+
+.navbar__logo img {
+  height: 100%;
+  width: auto;
+  filter: drop-shadow(0 2px 8px var(--openmt2-glow));
+}
+
+.navbar__title {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.navbar__link {
+  font-weight: 600;
+  transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: var(--ifm-color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Sidebar and table of contents
+   -------------------------------------------------------------------------- */
+
+.menu__link {
+  border-radius: 0.45rem;
+  transition: background-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default),
+    color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.menu__link:hover {
+  background: var(--ifm-menu-color-background-hover);
+}
+
+.menu__link--active:not(.menu__link--sublist) {
+  box-shadow: inset 2px 0 0 var(--ifm-color-primary);
+  font-weight: 600;
+}
+
+.table-of-contents__link {
+  transition: color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.table-of-contents__link:hover,
+.table-of-contents__link--active {
+  color: var(--ifm-color-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Markdown content
+   -------------------------------------------------------------------------- */
+
+.markdown h1:first-child {
+  letter-spacing: -0.02em;
+}
+
+.markdown h2 {
+  letter-spacing: -0.01em;
+}
+
+.markdown a {
+  text-decoration: underline;
+  text-decoration-color: var(--openmt2-glow);
+  text-underline-offset: 2px;
+  transition: text-decoration-color var(--ifm-transition-fast)
+    var(--ifm-transition-timing-default);
+}
+
+.markdown a:hover {
+  text-decoration-color: currentColor;
+}
+
+.markdown :not(pre) > code {
+  border: 1px solid var(--openmt2-border);
+  border-radius: 0.35rem;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.85em;
+}
+
+.markdown blockquote {
+  border-left: 3px solid var(--ifm-blockquote-border-color);
+  border-radius: 0 0.6rem 0.6rem 0;
+  background: var(--openmt2-glow);
+  padding: 1rem 1.25rem;
+  color: var(--ifm-color-content);
+}
+
+.markdown table th {
+  background: var(--ifm-table-head-background);
+}
+
+.markdown table tr {
+  border-color: var(--ifm-table-border-color);
+}
+
+/* Code blocks */
+
+.theme-code-block {
+  border: 1px solid var(--openmt2-border);
+  border-radius: 12px;
+  box-shadow: var(--openmt2-card-shadow);
+  overflow: hidden;
+}
+
+.theme-code-block pre {
+  border-radius: 12px;
+}
+
+/* Admonitions and details */
+
+.theme-admonition {
+  border: 1px solid var(--openmt2-border);
+  border-left: 4px solid var(--ifm-alert-border-color);
+  border-radius: 12px;
+  background: var(--ifm-background-surface-color);
+  box-shadow: none;
+}
+
+.theme-admonition-note {
+  --ifm-alert-border-color: var(--ifm-color-primary);
+}
+
+details {
+  border: 1px solid var(--openmt2-border);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+
+details summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* Cards, pagination, and footer */
+
+.card {
+  border: 1px solid var(--openmt2-border);
+  box-shadow: var(--openmt2-card-shadow);
+}
+
+.pagination-nav__link {
+  border: 1px solid var(--openmt2-border);
+  border-radius: 12px;
+  transition: border-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default),
+    background-color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--ifm-color-primary);
+  background: var(--ifm-menu-color-background-hover);
+}
+
+.footer {
+  background-image: radial-gradient(
+    ellipse 60% 120% at 50% -20%,
+    rgba(255, 107, 107, 0.12),
+    transparent 70%
+  );
+  border-top: 1px solid rgba(255, 107, 107, 0.18);
+}
+
+/* Docusaurus applies footer--dark after the roots, so set the surface here. */
+.footer.footer--dark {
+  --ifm-footer-background-color: #1a0e0f;
+  --ifm-footer-color: #d9cac8;
+  --ifm-footer-link-color: #e8dcdb;
+  --ifm-footer-link-hover-color: #ff8b8b;
+  --ifm-footer-title-color: #ffffff;
+}
+
+[data-theme='dark'] .footer.footer--dark {
+  --ifm-footer-background-color: #120a0b;
+  --ifm-footer-color: #d4c2c0;
+  --ifm-footer-link-color: #e6d8d6;
+  --ifm-footer-link-hover-color: #ff8b8b;
+}
+
+.footer__title {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}

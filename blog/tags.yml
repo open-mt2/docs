@@ -1,0 +1,14 @@
+announcements:
+  label: Announcements
+  permalink: /announcements
+  description: Project news and release notes.
+
+guides:
+  label: Guides
+  permalink: /guides
+  description: Tutorials and walkthroughs.
+
+development:
+  label: Development
+  permalink: /development
+  description: Implementation notes and development updates.

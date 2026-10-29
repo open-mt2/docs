@@ -1,0 +1,162 @@
+/**
+ * Homepage hero. The page-level palette is defined in src/css/custom.css and
+ * shared through Infima's CSS variables.
+ */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 5.5rem 0 5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--openmt2-border);
+  background:
+    radial-gradient(
+      ellipse 55% 70% at 50% -10%,
+      rgba(255, 107, 107, 0.26),
+      transparent 70%
+    ),
+    linear-gradient(180deg, #fff7f6 0%, var(--ifm-background-color) 75%);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(192, 52, 47, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(192, 52, 47, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 60% 60% at 50% 30%,
+    #000 0%,
+    transparent 75%
+  );
+  mask-image: radial-gradient(
+    ellipse 60% 60% at 50% 30%,
+    #000 0%,
+    transparent 75%
+  );
+  pointer-events: none;
+}
+
+[data-theme='dark'] .hero {
+  background:
+    radial-gradient(
+      ellipse 55% 70% at 50% -10%,
+      rgba(255, 107, 107, 0.24),
+      transparent 70%
+    ),
+    linear-gradient(180deg, #1d1112 0%, var(--ifm-background-color) 75%);
+}
+
+[data-theme='dark'] .hero::before {
+  background-image:
+    linear-gradient(to right, rgba(255, 107, 107, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 107, 107, 0.07) 1px, transparent 1px);
+}
+
+.inner {
+  position: relative;
+  z-index: 1;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.85rem;
+  border: 1px solid var(--openmt2-border);
+  border-radius: 999px;
+  background: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 1.5rem 0 1rem;
+  line-height: 0;
+}
+
+.heroLogo {
+  width: clamp(132px, 18vw, 184px);
+  height: auto;
+  border-radius: 22px;
+  box-shadow: 0 24px 60px -24px rgba(40, 8, 8, 0.55),
+    0 0 0 1px var(--openmt2-border);
+}
+
+[data-theme='dark'] .heroLogo {
+  box-shadow: 0 30px 80px -30px rgba(255, 80, 80, 0.35),
+    0 0 0 1px rgba(255, 107, 107, 0.18);
+}
+
+.subtitle {
+  max-width: 42rem;
+  margin: 0 auto;
+  color: var(--ifm-color-content-secondary);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.65;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  justify-content: center;
+  margin-top: 2.25rem;
+}
+
+.button {
+  border-radius: 10px;
+  font-weight: 700;
+  padding: 0.8rem 1.6rem;
+  transition: transform var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    box-shadow var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    border-color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.primaryButton {
+  border: 0;
+  background: linear-gradient(135deg, #d33f3a 0%, #a32c28 100%);
+  color: #ffffff;
+  box-shadow: 0 10px 30px -12px rgba(192, 52, 47, 0.7);
+}
+
+.primaryButton:hover,
+.primaryButton:focus {
+  color: #ffffff;
+  box-shadow: 0 14px 34px -12px rgba(192, 52, 47, 0.85);
+}
+
+.secondaryButton {
+  border: 1px solid var(--openmt2-border);
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-color-content);
+}
+
+.secondaryButton:hover,
+.secondaryButton:focus {
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+@media screen and (max-width: 996px) {
+  .hero {
+    padding: 5rem 1rem 4rem;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
