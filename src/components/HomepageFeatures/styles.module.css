@@ -23,20 +23,17 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.25rem;
-}
-
-.col {
-  display: flex;
 }
 
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  padding: 1.75rem;
+  height: 100%;
+  min-width: 0;
+  padding: 1.5rem;
   overflow: hidden;
   border: 1px solid var(--openmt2-border);
   border-radius: 16px;
@@ -74,32 +71,87 @@
   opacity: 1;
 }
 
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.15rem;
+}
+
 .icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  margin-bottom: 1.15rem;
   border-radius: 12px;
   background: var(--ifm-menu-color-background-active);
   color: var(--ifm-color-primary);
 }
 
+.githubLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--ifm-color-content-secondary);
+  transition:
+    color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    background-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default),
+    border-color var(--ifm-transition-fast) var(--ifm-transition-timing-default);
+}
+
+.githubLink:hover {
+  border-color: var(--openmt2-border);
+  background: var(--ifm-menu-color-background-hover);
+  color: var(--ifm-color-primary);
+}
+
 .cardTitle {
   margin-bottom: 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1.08rem;
   letter-spacing: -0.01em;
 }
 
 .cardText {
   margin: 0;
   color: var(--ifm-color-content-secondary);
-  font-size: 0.95rem;
-  line-height: 1.65;
+  font-size: 0.92rem;
+  line-height: 1.6;
 }
 
-@media (max-width: 996px) {
+.cardCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: auto;
+  padding-top: 1.1rem;
+  color: var(--ifm-color-primary);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: gap var(--ifm-transition-fast)
+    var(--ifm-transition-timing-default);
+}
+
+.cardCta:hover {
+  gap: 0.55rem;
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
   .grid {
     grid-template-columns: 1fr;
   }
