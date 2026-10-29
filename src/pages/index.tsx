@@ -9,7 +9,7 @@ import Heading from "@theme/Heading";
 
 import styles from "./index.module.css";
 
-const githubUrl = "https://github.com/openMT2";
+const githubUrl = "https://github.com/open-mt2";
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
@@ -37,7 +37,7 @@ function HomepageHeader() {
                 styles.button,
                 styles.primaryButton,
               )}
-              to="/docs/intro"
+              to="/guide/intro"
             >
               Read the docs
             </Link>

@@ -87,11 +87,13 @@ const config: Config = {
     v4: true, // Improve compatibility with the upcoming Docusaurus v4
   },
 
-  url: "https://openmt2.dev",
-  baseUrl: "/",
+  // GitHub Pages project site: https://open-mt2.github.io/docs/
+  // If you attach a custom domain, change this to the domain and set baseUrl to "/".
+  url: "https://open-mt2.github.io",
+  baseUrl: "/docs/",
 
-  organizationName: "openMT2",
-  projectName: "openMT2",
+  organizationName: "open-mt2",
+  projectName: "docs",
 
   onBrokenLinks: "throw",
 
@@ -100,12 +102,52 @@ const config: Config = {
     locales: ["en"],
   },
 
+  plugins: [
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "client",
+        path: "projects/client/docs",
+        routeBasePath: "client",
+        sidebarPath: "./projects/client/sidebars.ts",
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "server",
+        path: "projects/server/docs",
+        routeBasePath: "server",
+        sidebarPath: "./projects/server/sidebars.ts",
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "neoeter",
+        path: "projects/neoeter/docs",
+        routeBasePath: "neoeter",
+        sidebarPath: "./projects/neoeter/sidebars.ts",
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "other-projects",
+        path: "projects/other-projects/docs",
+        routeBasePath: "other-projects",
+        sidebarPath: "./projects/other-projects/sidebars.ts",
+      },
+    ],
+  ],
+
   presets: [
     [
       "classic",
       {
         docs: {
           sidebarPath: "./sidebars.ts",
+          routeBasePath: "guide",
         },
         blog: {
           showReadingTime: true,
@@ -143,9 +185,32 @@ const config: Config = {
           position: "left",
           label: "Docs",
         },
-        { to: "/blog", label: "Blog", position: "left" },
         {
-          href: "https://github.com/openMT2",
+          type: "dropdown",
+          label: "Projects",
+          position: "left",
+          className: "navbar-projects",
+          items: [
+            {
+              label: "Client",
+              to: "/client/",
+            },
+            {
+              label: "Server",
+              to: "/server/",
+            },
+            {
+              label: "Neoeter",
+              to: "/neoeter/",
+            },
+            {
+              label: "Other Projects",
+              to: "/other-projects/",
+            },
+          ],
+        },
+        {
+          href: "https://github.com/open-mt2",
           label: "GitHub",
           position: "right",
         },
@@ -159,15 +224,15 @@ const config: Config = {
           items: [
             {
               label: "Introduction",
-              to: "/docs/intro",
+              to: "/guide/intro",
             },
             {
               label: "Installation",
-              to: "/docs/getting-started/installation",
+              to: "/guide/getting-started/installation",
             },
             {
               label: "Contributing",
-              to: "/docs/contributing",
+              to: "/guide/contributing",
             },
           ],
         },
@@ -176,11 +241,11 @@ const config: Config = {
           items: [
             {
               label: "GitHub",
-              href: "https://github.com/openMT2",
+              href: "https://github.com/open-mt2",
             },
             {
               label: "Issues",
-              href: "https://github.com/openMT2/issues",
+              href: "https://github.com/open-mt2/docs/issues",
             },
             {
               label: "Blog",

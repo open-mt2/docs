@@ -234,6 +234,47 @@ body {
   color: var(--ifm-color-primary);
 }
 
+/* Projects dropdown */
+.navbar-projects + .dropdown__menu {
+  min-width: 14rem;
+  padding: 0.45rem;
+  border: 1px solid var(--openmt2-border);
+  border-radius: 12px;
+  box-shadow: var(--openmt2-card-shadow);
+}
+
+.navbar-projects + .dropdown__menu .dropdown__link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.navbar-projects + .dropdown__menu .dropdown__link::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  opacity: 0.5;
+  transition: opacity var(--ifm-transition-fast)
+    var(--ifm-transition-timing-default);
+}
+
+.navbar-projects + .dropdown__menu .dropdown__link:hover::before,
+.navbar-projects + .dropdown__menu .dropdown__link--active::before {
+  opacity: 1;
+}
+
+.navbar-projects + .dropdown__menu .dropdown__link:hover {
+  background: var(--ifm-menu-color-background-hover);
+  color: var(--ifm-color-primary);
+}
+
 /* --------------------------------------------------------------------------
    Sidebar and table of contents
    -------------------------------------------------------------------------- */
