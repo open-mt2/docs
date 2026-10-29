@@ -1,0 +1,86 @@
+---
+sidebar_position: 2
+title: Roadmap
+---
+
+import Roadmap from "@site/src/components/Roadmap";
+
+# Roadmap
+
+This roadmap tracks the major milestones for the OpenMT2 client, server, and
+documentation. Items move from **Planned** to **In progress** to **Done**.
+
+Scroll horizontally to follow the timeline.
+
+<Roadmap
+  items={[
+    {
+      title: "Make the client compile on Linux",
+      status: "done",
+      area: "Client",
+      description: "Build the legacy client toolchain on modern Linux.",
+    },
+    {
+      title: "Replace proprietary libraries",
+      status: "done",
+      area: "Client",
+      description:
+        "Remove dependencies on closed-source or unavailable libraries.",
+    },
+    {
+      title: "Rebuild the renderer with OpenGL",
+      status: "active",
+      area: "Client",
+      description:
+        "Replace the legacy rendering path with a portable OpenGL renderer.",
+    },
+    {
+      title: "Initialize the documentation",
+      status: "active",
+      area: "Docs",
+      description: "Set up the docs site and document the project structure.",
+    },
+    {
+      title: "Initialize the Neoeter project",
+      status: "planned",
+      area: "Neoeter",
+      description: "Bootstrap Neoeter and define its scope.",
+    },
+    {
+      title: "Build a C# client pack framework",
+      status: "planned",
+      area: "Tooling",
+      description: "Tooling for packing client assets and generating binaries.",
+    },
+    {
+      title: "Clean up and modernize the server files",
+      status: "planned",
+      area: "Server",
+      description: "Audit the legacy server code and harden the stack.",
+    },
+    {
+      title: "Improve client/server connections",
+      status: "planned",
+      area: "Networking",
+      description: "Modernize the network protocol and connection handling.",
+    },
+    {
+      title: "Add a server plugin framework",
+      status: "planned",
+      area: "Server",
+      description: "Support server extensions through a plugin API.",
+    },
+    {
+      title: "Progressively port the client to Rust",
+      status: "planned",
+      area: "Client",
+      description: "Move client subsystems to Rust incrementally.",
+    },
+    {
+      title: "Progressively port the server to Rust",
+      status: "planned",
+      area: "Server",
+      description: "Move server subsystems to Rust incrementally.",
+    },
+  ]}
+/>

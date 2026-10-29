@@ -227,8 +227,8 @@ const config: Config = {
               to: "/guide/intro",
             },
             {
-              label: "Installation",
-              to: "/guide/getting-started/installation",
+              label: "Roadmap",
+              to: "/guide/roadmap",
             },
             {
               label: "Contributing",
