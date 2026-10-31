@@ -9,12 +9,25 @@ The OpenMT2 client is a modernized, refactored Metin2 client split into focused
 packages. Each package owns a specific subsystem, so work can happen
 independently while keeping the engine modular.
 
+The client builds natively on Linux and cross-compiles to Windows from the same
+Docker image. Both targets share the SDL2 window and input layer, the OpenGL
+compatibility renderer, the Python 2.7 runtime and the asset packaging.
+
+## Status
+
+Linux and Windows both compile, link and reach the login flow. Windowing,
+input, the GL renderer, headless audio, packaging and the boot smoke pass on
+both targets. The remaining parity gaps are IME/CJK text input and the Windows
+login background scene, both tracked in the devkit task sheet.
+
 ## In this section
 
 - **[Packages](./packages)** — the client package repositories and what they do.
-- **[Building](./building)** — build and packaging notes.
+- **[Building](./building)** — build, package, smoke-test and CI commands.
+- **[Windows parity](./parity)** — the cross-platform plan and current gaps.
 
 ## Related links
 
 - [OpenMT2 repositories](https://github.com/orgs/open-mt2/repositories)
+- [Devkit](https://github.com/open-mt2/devkit) — Docker image, build scripts and tests
 - [Documentation issue tracker](https://github.com/open-mt2/docs/issues)

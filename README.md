@@ -70,3 +70,18 @@ Add new documentation pages under `docs/` and use `_category_.json` files to
 label and order folders in the sidebar. Projects live in their own documentation
 instances under `projects/<project>/`; register each one in the `plugins` array
 in `docusaurus.config.ts` and add it to the Projects menu.
+
+## Keeping content current
+
+The client pages mirror the current devkit commands and parity state. When a
+devkit change alters a build command, a check, a workflow or the parity status,
+update `projects/client/docs/building.mdx` and `parity.mdx` in the same change
+window. Link to the devkit's plan and task sheet rather than copying detailed
+task state, so this site does not become a second, stale source of truth.
+
+Validate content before pushing:
+
+```bash
+npm run build      # onBrokenLinks is set to "throw"
+npm run typecheck
+```

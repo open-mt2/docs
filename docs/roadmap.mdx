@@ -29,22 +29,37 @@ Scroll horizontally to follow the timeline.
     },
     {
       title: "Rebuild the renderer with OpenGL",
+      status: "done",
+      area: "Client",
+      description:
+        "Replace the legacy rendering path with a portable OpenGL renderer behind a backend seam.",
+    },
+    {
+      title: "Reach Windows/Linux parity",
       status: "active",
       area: "Client",
       description:
-        "Replace the legacy rendering path with a portable OpenGL renderer.",
+        "Cross-compile, package and smoke-test both targets from one Docker image; close the IME and scene-rendering gaps.",
+    },
+    {
+      title: "Add a Vulkan renderer backend",
+      status: "planned",
+      area: "Client",
+      description:
+        "Synthesise the fixed-function state and shaders behind the renderer seam (Wave 5).",
     },
     {
       title: "Initialize the documentation",
-      status: "active",
+      status: "done",
       area: "Docs",
-      description: "Set up the docs site and document the project structure.",
+      description: "Publish the docs site and document the project structure.",
     },
     {
       title: "Initialize the Neoeter project",
       status: "planned",
       area: "Neoeter",
-      description: "Bootstrap Neoeter and define its scope.",
+      description:
+        "Consolidate the 16 client packages into neoeter, neoeter-python and client.",
     },
     {
       title: "Build a C# client pack framework",

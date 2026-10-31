@@ -1,0 +1,79 @@
+---
+title: Windows parity
+sidebar_position: 4
+---
+
+# Windows parity
+
+OpenMT2 targets one codebase and two platforms. The same C++ sources, SDL2
+window and input layer, OpenGL compatibility renderer, Python 2.7 runtime and
+asset packaging build natively on Linux and cross-compile to Windows from the
+same Docker image. The native Win32, DirectInput, D3D9/D3DX9 and Miles paths are
+retired, so no DirectX SDK, MSVC or Visual Studio solution is involved.
+
+The plan and task breakdown live in the devkit:
+
+- [Windows/Linux parity plan](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity.md)
+- [Parity task sheet](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity-tasks.md)
+  — the source of truth for task state and evidence
+- [Fixed-function feature matrix](https://github.com/open-mt2/devkit/blob/main/docs/planning/feature-matrix.md)
+  — the renderer contract for the shader work
+
+## What changed
+
+- Windows builds the same CMake project as Linux. The legacy MSVC
+  `build.bat`/`Metin2Client.sln` path is gone.
+- Window creation and input are SDL2 on both targets, and the OpenGL
+  compatibility renderer is enabled on Windows.
+- OpenGL entry points are loaded at runtime, so the executable no longer
+  depends on unresolved `gl*` symbols.
+- `build-windows.sh` packages the Windows tree like `build.sh` does on Linux:
+  the same assets, the same `pack/Index`-driven archives, plus the `.exe` and
+  runtime DLLs.
+- `scripts/smoke.sh` boots both packages headlessly and fails on crashes, fatal
+  errors or a blank screen.
+- A tag/manual `parity` workflow builds both targets, runs the devkit and Linux
+  test suites, compares the distributions and publishes the packages.
+
+## Current status
+
+Last audit: [evidence/T3.3.md](https://github.com/open-mt2/devkit/blob/main/evidence/T3.3.md)
+(2026-10-31).
+
+| Area | Status |
+| --- | --- |
+| Keyboard and mouse input, focus loss | Pass |
+| Windowed mode | Pass |
+| Audio (headless null backend) | Pass |
+| Path and case handling | Pass |
+| Locale / codepage | Partial — English assets only |
+| IME / CJK text input | Open — tracked as T1.6 |
+| Windows login background | Open — UI and text render, scene background is black (T5.2) |
+| Fullscreen / resolution switching | Unverified — needs a real desktop |
+| PE imports | Pass — OpenGL32, python27 and the MinGW runtime only |
+| Package layout | Pass — no unexpected differences |
+
+Both targets compile, link and reach the login flow. The remaining gaps are
+tracked in the task sheet, with the renderer work scoped for Wave 5.
+
+## Verifying
+
+Build both distributions, then run inside the devkit image:
+
+```bash
+scripts/smoke.sh linux   --dist dist-linux
+scripts/smoke.sh windows --dist dist-windows
+python3 scripts/dist-diff.py dist-linux dist-windows
+```
+
+The full parity workflow can be triggered with:
+
+```bash
+gh workflow run parity --repo open-mt2/devkit
+```
+
+## Related links
+
+- [Building](./building)
+- [Client packages](./packages)
+- [Devkit repository](https://github.com/open-mt2/devkit)

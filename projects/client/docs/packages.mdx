@@ -6,19 +6,33 @@ sidebar_position: 2
 # Packages
 
 The client is split into small repositories, each responsible for one part of
-the engine.
+the engine. The list follows the dependency order used by the build.
 
 | Package | Responsibility |
 | --- | --- |
 | [pkg_eterbase](https://github.com/open-mt2/pkg_eterbase) | Foundational engine utilities |
-| [pkg_eterlib](https://github.com/open-mt2/pkg_eterlib) | Core engine framework |
+| [pkg_eterlocale](https://github.com/open-mt2/pkg_eterlocale) | Locale and codepage tables |
+| [pkg_eterpack](https://github.com/open-mt2/pkg_eterpack) | Virtual file system and archives |
+| [pkg_eterimagelib](https://github.com/open-mt2/pkg_eterimagelib) | Image codecs and texture helpers |
+| [pkg_spherelib](https://github.com/open-mt2/pkg_spherelib) | Math and geometry primitives |
+| [pkg_cwebbrowser](https://github.com/open-mt2/pkg_cwebbrowser) | Web browser stub (legacy IE/ActiveX surface removed) |
+| [pkg_eterlib](https://github.com/open-mt2/pkg_eterlib) | Core engine framework: window, input, rendering |
+| [pkg_mileslib](https://github.com/open-mt2/pkg_mileslib) | Audio, on miniaudio |
 | [pkg_etergrnlib](https://github.com/open-mt2/pkg_etergrnlib) | Models, animation, and LOD |
+| [pkg_speedtreelib](https://github.com/open-mt2/pkg_speedtreelib) | SpeedTree compatibility and the baked tree cache |
 | [pkg_prterrainlib](https://github.com/open-mt2/pkg_prterrainlib) | Terrain and heightfields |
 | [pkg_effectlib](https://github.com/open-mt2/pkg_effectlib) | Particles, effects, and lighting |
 | [pkg_scriptlib](https://github.com/open-mt2/pkg_scriptlib) | Python scripting integration |
-| [pkg_eterpack](https://github.com/open-mt2/pkg_eterpack) | Virtual file system and archives |
+| [pkg_eterpythonlib](https://github.com/open-mt2/pkg_eterpythonlib) | Python bindings for the engine |
 | [pkg_gamelib](https://github.com/open-mt2/pkg_gamelib) | Game logic |
 | [pkg_userinterface](https://github.com/open-mt2/pkg_userinterface) | User interface |
-| [pkg_mileslib](https://github.com/open-mt2/pkg_mileslib) | Audio |
+
+## Planned consolidation
+
+The 16 repositories are planned to consolidate into three: `neoeter` (engine),
+`neoeter-python` (Python bridge) and `client` (game). The move preserves
+history and keeps the current include paths and target names through temporary
+shims. Until that lands, changes go into the `pkg_*` repositories. See
+[Neoeter](/neoeter/) for the target structure.
 
 [Browse all client packages on GitHub →](https://github.com/orgs/open-mt2/repositories?q=pkg_)

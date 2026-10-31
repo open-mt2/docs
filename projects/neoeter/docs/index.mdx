@@ -5,21 +5,35 @@ sidebar_position: 1
 
 # Neoeter
 
-Documentation for the Neoeter project.
+Neoeter is the planned home for the refactored Eter engine packages. The goal is
+to replace the 16-repository client layout with three repositories that match
+the dependency layers, while preserving history and keeping the current include
+paths and target names working through temporary shims.
+
+## Planned repositories
+
+| Repository | Contents |
+| --- | --- |
+| `neoeter` | Engine layers L0–L3: platform, I/O, image, render, audio, model, terrain and effects |
+| `neoeter-python` | Python bridge: `scriptlib` and `eterpythonlib` |
+| `client` | Game layer: `gamelib` and `userinterface` |
+
+The consolidation is a move-only refactor: no behaviour, naming or formatting
+changes in the move commits. The target is the same output on both platforms
+and the same test and golden baselines before and after.
 
 :::note
 
-This section is being set up. Check back for setup, architecture, and usage
-guides as the project takes shape.
+This is not started yet. The 16 `pkg_*` repositories are still the source of
+truth, and the devkit parity work continues against them. The plan and task
+breakdown live in the devkit's
+[Windows/Linux parity plan](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity.md)
+and [task sheet](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity-tasks.md).
 
 :::
 
-## Overview
-
-Neoeter is part of the OpenMT2 ecosystem. This section will collect the
-reference material needed to work with it.
-
 ## Related links
 
+- [Client packages](/client/packages)
 - [OpenMT2 repositories](https://github.com/orgs/open-mt2/repositories)
 - [Documentation issue tracker](https://github.com/open-mt2/docs/issues)

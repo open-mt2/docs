@@ -5,21 +5,136 @@ sidebar_position: 3
 
 # Building
 
-The client is packaged with Docker. The container handles the toolchain so the
-host only needs Docker and Git.
+The client is built inside the [devkit](https://github.com/open-mt2/devkit)
+Docker image. The image provides the Linux toolchain, the MinGW-w64 cross
+toolchain, Wine, Python 2.7 and the vendored dependencies, so the host only
+needs Docker and Git. A Windows host, Visual Studio and the DirectX SDK are not
+required.
 
 ## Requirements
 
-- [Docker](https://docs.docker.com/get-docker/)
+- [Docker](https://docs.docker.com/get-docker/) with BuildKit (the default)
 - Git
+- Python 3, for the devkit unit tests and `scripts/dist-diff.py`
 
-## Build workflow
+## Build the image
 
-The build is driven by Docker. Refer to the client repository readme for the
-current commands and image names, since the packaging setup evolves with the
-project.
+```bash
+git clone https://github.com/open-mt2/devkit.git
+cd devkit
+docker build -f dockerfile -t openmt2/client .
+```
+
+The default image fetches the client assets (~2.3 GB) and the SpeedTree baker.
+For a code-only image:
+
+```bash
+docker build -f dockerfile \
+  --build-arg WITH_BIN=0 \
+  --build-arg BAKE_TREES=0 \
+  -t openmt2/client:slim .
+```
+
+## Linux build
+
+With no arguments the entrypoint runs `build.sh`, compiles the client and
+assembles `dist/`:
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  -v "$PWD/src:/workspace/src" \
+  -v "$PWD/build:/workspace/build" \
+  -v "$PWD/dist:/workspace/dist" \
+  openmt2/client -t --skip-pack
+```
+
+`-t` runs the CTest suite and `--skip-pack` skips re-zipping the asset archives
+during iterative work. The package contains `metin2client`, the bundled
+runtime (`runtime/` plus the CPython 2.7 standard library in `lib/`), the asset
+directories and `pack/*.zip`.
+
+## Windows cross-build
+
+The same image cross-compiles the x86_64 client with MinGW-w64:
+
+```bash
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  -v "$PWD/src:/workspace/src" \
+  -v "$PWD/build:/workspace/build" \
+  -v "$PWD/dist:/workspace/dist" \
+  openmt2/client windows
+```
+
+The Windows package mirrors the Linux one and adds `metin2client.exe` and its
+runtime DLLs (`python27.dll`, `msvcr90.dll`, `libstdc++-6.dll`,
+`libgcc_s_seh-1.dll`). SDL2 is linked statically. Keep the runtime DLLs next to
+the executable when copying `dist/` to a Windows machine.
+
+## Build both targets and compare
+
+```bash
+# Linux -> dist-linux/
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  -e OPENMT2_DIST_DIR=/workspace/dist-linux \
+  -v "$PWD/src:/workspace/src" \
+  -v "$PWD/build:/workspace/build" \
+  -v "$PWD/dist-linux:/workspace/dist-linux" \
+  openmt2/client --skip-pack
+
+# Windows -> dist-windows/
+docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  -e OPENMT2_DIST_DIR=/workspace/dist-windows \
+  -v "$PWD/src:/workspace/src" \
+  -v "$PWD/build:/workspace/build" \
+  -v "$PWD/dist-windows:/workspace/dist-windows" \
+  openmt2/client windows --skip-pack
+
+python3 scripts/dist-diff.py dist-linux dist-windows
+```
+
+`dist-diff.py` fails on unexpected differences. The two trees must differ only
+by the executable, the platform runtime libraries and the platform extension
+modules.
+
+## Smoke test
+
+`scripts/smoke.sh` boots a packaged tree under Xvfb (and Wine for the Windows
+build), waits for the login screen, captures a screenshot and fails on crashes,
+fatal `syserr.txt` entries or a blank screen. Run it inside the devkit image;
+use `--dist` when the two trees were built side by side:
+
+```bash
+scripts/smoke.sh linux   --dist dist-linux
+scripts/smoke.sh windows --dist dist-windows
+```
+
+## Tests and checks
+
+| Check | Command |
+| --- | --- |
+| Devkit unit tests | `python3 -m unittest discover -s tests -p 'test_*.py' -v` |
+| Client CTest suite | `docker run … openmt2/client -t --skip-pack` |
+| Golden baselines | `scripts/golden-check.sh` |
+| Fixed-function matrix | `scripts/feature-matrix.sh --check` |
+| Coverage ratchet | `docker run … openmt2/client coverage --check` |
+| Fuzz targets | `scripts/fuzz-smoke.sh` |
+
+`golden-check.sh` and `feature-matrix.sh` expect a prepared workspace with
+`src/` materialized. See the devkit readme for the exact container mounts.
+
+## Continuous integration
+
+Two devkit workflows run on release tags and on demand; ordinary pushes and
+pull requests do not rebuild the full image:
+
+- `parity` builds Linux and Windows, runs the devkit unit tests and the Linux
+  CTest suite, compares the two distributions and uploads both `dist/` trees.
+- `coverage` runs the per-module coverage ratchet and publishes the report.
 
 ## Related links
 
+- [Devkit readme](https://github.com/open-mt2/devkit#readme)
+- [Windows/Linux parity plan](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity.md)
+- [Parity task sheet](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity-tasks.md)
 - [Client packages](./packages)
-- [OpenMT2 repositories](https://github.com/orgs/open-mt2/repositories)
+- [Windows parity status](./parity)
