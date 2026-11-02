@@ -10,6 +10,7 @@ const composeDownloadUrl =
 
 const composeQuickstart = `curl -o docker-compose.yml ${composeDownloadUrl}
 docker compose up -d
+docker compose --profile build run --rm client fetch
 docker compose --profile build run --rm client build`;
 
 const windowsDockerSetup = `winget install -e --id Docker.DockerDesktop
@@ -17,7 +18,8 @@ const windowsDockerSetup = `winget install -e --id Docker.DockerDesktop
 
 const composeQuickstartWindows = `Invoke-WebRequest -UseBasicParsing -Uri ${composeDownloadUrl} -OutFile docker-compose.yml
 docker compose up -d
-docker compose --profile build run --rm client build`;
+docker compose --profile build run --rm client fetch
+docker compose --profile build run --rm client windows`;
 
 type Platform = "linux" | "macos" | "windows";
 

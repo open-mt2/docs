@@ -1,93 +1,177 @@
-# OpenMT2 quickstart — local development stack
-#
-# Layout:
-#   openmt2/
-#   ├── docker-compose.yml   # this file
-#   └── sql-init/            # optional MySQL seed files
-#
-# The client image is pulled from GHCR, so no devkit checkout is required.
-#
-# Start the database and game server:
-#   docker compose up -d
-#
-# Build the Linux client (output in ./dist):
-#   docker compose --profile build run --rm client
-#
-# Build the Windows client (output in ./dist-windows):
-#   docker compose --profile build run --rm client-windows
-
-name: openmt2
+x-environment:
+  &common-environment
+    MYSQL_HOST: ${MYSQL_HOST:-mysql}
+    MYSQL_USER: ${MYSQL_USER:-root}
+    MYSQL_PASSWORD: ${MYSQL_PASSWORD:-metin2}
+    MYSQL_PORT: ${MYSQL_PORT:-3306}
+    MYSQL_DB_ACCOUNT: ${MYSQL_DB_ACCOUNT:-account}
+    MYSQL_DB_PLAYER: ${MYSQL_DB_PLAYER:-player}
+    MYSQL_DB_COMMON: ${MYSQL_DB_COMMON:-common}
+    MYSQL_DB_LOG: ${MYSQL_DB_LOG:-log}
+    TEST_SERVER: ${TEST_SERVER:-0}
+    DB_ADDR: ${DB_ADDR:-db}
+    DB_PORT: ${DB_PORT:-15000}
+    PUBLIC_IP: ${PUBLIC_IP:-127.0.0.1}
+    GAME_MAX_LEVEL: ${GAME_MAX_LEVEL:-105}
+    # Required by the game core; these are integration settings, not a web app.
+    WEB_APP_URL: ${WEB_APP_URL:-http://metin2.local}
+    WEB_APP_KEY: ${WEB_APP_KEY:-base64:LwP3SVxG640k8o/e4SNF8dVdrCo/DJs/PD+To5uykCo=}
 
 services:
-  db:
-    image: mysql:5.7
-    container_name: openmt2-db
-    restart: unless-stopped
+  mysql:
+    image: biarms/mysql:5.5
+    restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-change-this-root-password}"
-      MYSQL_DATABASE: game
-      MYSQL_USER: game
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-change-this-password}"
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD:-metin2}
+    ports:
+      - '${MYSQL_EXTERNAL_PORT:-3306}:${MYSQL_PORT:-3306}'
+    expose:
+      - ${MYSQL_PORT:-3306}
     volumes:
-      - mysql_data:/var/lib/mysql
-      - ./sql-init:/docker-entrypoint-initdb.d:ro
-    networks:
-      - game-network
+      - ./storage/database/:/var/lib/mysql/
+      - ./assets/db-init/:/docker-entrypoint-initdb.d/:ro
     healthcheck:
-      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      test: mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD
       interval: 10s
       timeout: 5s
-      retries: 15
-      start_period: 30s
+      retries: 5
 
-  game-server:
-    image: metin2/server:test
-    container_name: openmt2-game-server
-    restart: unless-stopped
-    init: true
+  db:
+    image: ${GAME_IMAGE:-git.old-metin2.com/metin2/server:latest}
+    restart: always
+    environment: *common-environment
+    expose:
+      - ${DB_PORT:-15000}
+    command: db
+    volumes:
+      - ./storage/log/db/:/app/log/
     depends_on:
-      db:
+      mysql:
         condition: service_healthy
+
+  auth:
+    image: ${GAME_IMAGE:-git.old-metin2.com/metin2/server:latest}
+    restart: always
     environment:
-      DB_HOST: db
-      DB_PORT: "3306"
-      DB_NAME: game
-      DB_USER: game
-      DB_PASSWORD: "${MYSQL_PASSWORD:-change-this-password}"
-      PUBLIC_BIND_IP: "0.0.0.0"
-      INTERNAL_BIND_IP: "0.0.0.0"
-    # Publish the ports used by your server configuration, for example:
-    # ports:
-    #   - "13000:13000"
-    networks:
-      - game-network
+      <<: *common-environment
+      MYSQL_DB_PLAYER: ${MYSQL_DB_ACCOUNT:-account}
+      GAME_HOSTNAME: auth
+      GAME_CHANNEL: 1
+      GAME_AUTH_SERVER: master
+      GAME_PORT: 11000
+      GAME_P2P_PORT: 12000
+    expose:
+      - 11000
+      - 12000
+    ports:
+      - '11000:11000'
+    command: game
+    volumes:
+      - ./storage/log/auth/:/app/log/
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  ch1_first:
+    image: ${GAME_IMAGE:-git.old-metin2.com/metin2/server:latest}
+    restart: always
+    environment:
+      <<: *common-environment
+      GAME_HOSTNAME: ch1_first
+      GAME_CHANNEL: 1
+      GAME_MARK_SERVER: 1
+      GAME_PORT: 13000
+      GAME_P2P_PORT: 14000
+      GAME_MAP_ALLOW: 1 4 5 6 3 23 43 112 107 67 68 72 208 302 304
+    expose:
+      - 13000
+      - 14000
+    ports:
+      - '13000:13000'
+    command: game
+    volumes:
+      - ./storage/log/ch1/first/:/app/log/
+      - ./storage/mark/:/app/mark/
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  ch1_game1:
+    image: ${GAME_IMAGE:-git.old-metin2.com/metin2/server:latest}
+    restart: always
+    environment:
+      <<: *common-environment
+      GAME_HOSTNAME: ch1_game1
+      GAME_CHANNEL: 1
+      GAME_MARK_SERVER: 0
+      GAME_PORT: 13001
+      GAME_P2P_PORT: 14001
+      GAME_MAP_ALLOW: 21 24 25 26 108 61 63 69 70 73 216 217 303
+    expose:
+      - 13001
+      - 14001
+    ports:
+      - '13001:13001'
+    command: game
+    volumes:
+      - ./storage/log/ch1/game1/:/app/log/
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  ch1_game2:
+    image: ${GAME_IMAGE:-git.old-metin2.com/metin2/server:latest}
+    restart: always
+    environment:
+      <<: *common-environment
+      GAME_HOSTNAME: ch1_game2
+      GAME_CHANNEL: 1
+      GAME_MARK_SERVER: 0
+      GAME_PORT: 13002
+      GAME_P2P_PORT: 14002
+      GAME_MAP_ALLOW: 41 44 45 46 109 62 64 65 66 71 104 301 351
+    expose:
+      - 13002
+      - 14002
+    ports:
+      - '13002:13002'
+    command: game
+    volumes:
+      - ./storage/log/ch1/game2/:/app/log/
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  game99:
+    image: ${GAME_IMAGE:-git.old-metin2.com/metin2/server:latest}
+    restart: always
+    environment:
+      <<: *common-environment
+      GAME_HOSTNAME: game99
+      GAME_CHANNEL: 99
+      GAME_MARK_SERVER: 0
+      GAME_PORT: 13099
+      GAME_P2P_PORT: 14099
+      GAME_MAP_ALLOW: 113 81 100 101 103 105 110 111 114 118 119 120 121 122 123 124 125 126 127 128 181 182 183 200
+    expose:
+      - 13099
+      - 14099
+    ports:
+      - '13099:13099'
+    command: game
+    volumes:
+      - ./storage/log/game99/:/app/log/
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   client:
     image: ghcr.io/open-mt2/client:latest
-    profiles: ["build"]
     environment:
-      HOME: /tmp
+      GIT_CONFIG_COUNT: "1"
+      GIT_CONFIG_KEY_0: safe.directory
+      GIT_CONFIG_VALUE_0: "*"
     volumes:
-      - ./dist:/workspace/dist
-    command: ["--skip-pack"]
-    networks:
-      - game-network
-
-  client-windows:
-    image: ghcr.io/open-mt2/client:latest
-    profiles: ["build"]
-    environment:
-      HOME: /tmp
-      OPENMT2_DIST_DIR: /workspace/dist-windows
-    volumes:
-      - ./dist-windows:/workspace/dist-windows
-    command: ["windows", "--skip-pack"]
-    networks:
-      - game-network
-
-volumes:
-  mysql_data:
-
-networks:
-  game-network:
-    driver: bridge
+      - ./src:/workspace/src
+      - ./bin:/workspace/bin
+      - ./client:/workspace/dist
