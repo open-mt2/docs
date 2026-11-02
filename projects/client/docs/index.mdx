@@ -1,33 +1,34 @@
 ---
-title: Client
+title: Introduction
 sidebar_position: 1
 ---
 
-# Client
+# Introduction
 
-The OpenMT2 client is a modernized, refactored Metin2 client split into focused
-packages. Each package owns a specific subsystem, so work can happen
-independently while keeping the engine modular.
+The OpenMT2 client is a modernized, refactored Metin2 client. It keeps the
+original game content and UI while replacing the engine and platform layers
+with open, cross-platform code.
 
-The client builds natively on Linux and cross-compiles to Windows from the same
-Docker image. Both targets share the SDL2 window and input layer, the OpenGL
-compatibility renderer, the Python 2.7 runtime and the asset packaging.
+## How it fits together
 
-## Status
+The **client** owns the game and UI, registers the game modules and uses the
+**Python bridge** and the incoming **C# bridge**. It also links the **Neoeter
+engine** directly for rendering, audio, models and world data. The **assets
+packs** are content loaded through the engine.
 
-Linux and Windows both compile, link and reach the login flow. Windowing,
-input, the GL renderer, headless audio, packaging and the boot smoke pass on
-both targets. The remaining parity gaps are IME/CJK text input and the Windows
-login background scene, both tracked in the devkit task sheet.
+The engine and bridges never include client headers, so the engine stays
+reusable and the game layer stays replaceable.
 
-## In this section
+## Incoming: C# modding
 
-- **[Packages](./packages)** — the client package repositories and what they do.
-- **[Building](./building)** — build, package, smoke-test and CI commands.
-- **[Windows parity](./parity)** — the cross-platform plan and current gaps.
+A C# bridge is planned as a shared, dev-first framework for server and client
+mods. It will let a mod target both sides from one codebase.
 
-## Related links
+## Platforms
 
-- [OpenMT2 repositories](https://github.com/orgs/open-mt2/repositories)
-- [Devkit](https://github.com/open-mt2/devkit) — Docker image, build scripts and tests
-- [Documentation issue tracker](https://github.com/open-mt2/docs/issues)
+The same sources build natively on Linux and cross-compile to Windows. Both
+targets share the same window and input layer, renderer, Python runtime and
+asset packaging.
+
+Both targets compile, link and reach the login flow. The remaining gaps are
+IME/CJK text input and the Windows login background scene.

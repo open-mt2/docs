@@ -1,0 +1,113 @@
+.setup {
+  padding: 5rem 0 1rem;
+  width: 100%;
+}
+
+.intro {
+  max-width: 46rem;
+  margin: 0 auto 1.75rem;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--openmt2-border);
+  border-radius: 999px;
+  background: var(--ifm-menu-color-background-active);
+  color: var(--ifm-color-primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 1rem 0 0.75rem;
+  font-size: clamp(1.7rem, 3.2vw, 2.3rem);
+  letter-spacing: -0.02em;
+}
+
+.panel {
+  max-width: 40rem;
+  margin: 0 auto 32px auto;
+}
+
+.platformTabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.platformTab {
+  border: 0;
+  background: transparent;
+  color: var(--ifm-color-content-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 600;
+  transition:
+    color var(--ifm-transition-fast) var(--ifm-transition-timing-default),
+    background-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default),
+    border-color var(--ifm-transition-fast)
+      var(--ifm-transition-timing-default);
+}
+
+.platformTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  border-radius: 999px;
+  font-size: 0.92rem;
+}
+
+.icon {
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+
+.inlineIcon {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.35em;
+  vertical-align: -0.125em;
+}
+
+.platformTab:hover {
+  background: var(--ifm-menu-color-background-hover);
+  color: var(--ifm-color-primary);
+}
+
+.activeTab.platformTab {
+  background: var(--ifm-color-primary);
+  color: #ffffff;
+}
+
+.activeTab.platformTab:hover {
+  background: var(--ifm-color-primary-dark);
+  color: #ffffff;
+}
+
+.content {
+  padding: 0;
+}
+
+.content :global(.theme-code-block) {
+  margin: 0;
+}
+
+.content :global(.theme-code-block + .theme-code-block) {
+  margin-top: 1rem;
+}
+
+@media screen and (max-width: 700px) {
+  .setup {
+    padding: 4rem 0 0.5rem;
+  }
+}

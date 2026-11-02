@@ -1,0 +1,64 @@
+.figure {
+  margin: 1.75rem 0;
+}
+
+.diagram {
+  display: block;
+  width: 100%;
+  max-width: 880px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.dot,
+.incomingDot,
+.contentDot {
+  animation: client-arch-pulse 2.4s ease-in-out infinite;
+}
+
+.incomingDot {
+  animation-name: client-arch-incoming-pulse;
+}
+
+.contentDot {
+  animation-name: client-arch-content-pulse;
+}
+
+@keyframes client-arch-pulse {
+  0%,
+  100% {
+    opacity: 0.18;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes client-arch-incoming-pulse {
+  0%,
+  100% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes client-arch-content-pulse {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot,
+  .incomingDot,
+  .contentDot {
+    animation: none;
+    opacity: 0.35;
+  }
+}

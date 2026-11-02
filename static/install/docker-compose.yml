@@ -1,0 +1,93 @@
+# OpenMT2 quickstart — local development stack
+#
+# Layout:
+#   openmt2/
+#   ├── docker-compose.yml   # this file
+#   └── sql-init/            # optional MySQL seed files
+#
+# The client image is pulled from GHCR, so no devkit checkout is required.
+#
+# Start the database and game server:
+#   docker compose up -d
+#
+# Build the Linux client (output in ./dist):
+#   docker compose --profile build run --rm client
+#
+# Build the Windows client (output in ./dist-windows):
+#   docker compose --profile build run --rm client-windows
+
+name: openmt2
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: openmt2-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:-change-this-root-password}"
+      MYSQL_DATABASE: game
+      MYSQL_USER: game
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD:-change-this-password}"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - game-network
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
+
+  game-server:
+    image: metin2/server:test
+    container_name: openmt2-game-server
+    restart: unless-stopped
+    init: true
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: game
+      DB_USER: game
+      DB_PASSWORD: "${MYSQL_PASSWORD:-change-this-password}"
+      PUBLIC_BIND_IP: "0.0.0.0"
+      INTERNAL_BIND_IP: "0.0.0.0"
+    # Publish the ports used by your server configuration, for example:
+    # ports:
+    #   - "13000:13000"
+    networks:
+      - game-network
+
+  client:
+    image: ghcr.io/open-mt2/client:latest
+    profiles: ["build"]
+    environment:
+      HOME: /tmp
+    volumes:
+      - ./dist:/workspace/dist
+    command: ["--skip-pack"]
+    networks:
+      - game-network
+
+  client-windows:
+    image: ghcr.io/open-mt2/client:latest
+    profiles: ["build"]
+    environment:
+      HOME: /tmp
+      OPENMT2_DIST_DIR: /workspace/dist-windows
+    volumes:
+      - ./dist-windows:/workspace/dist-windows
+    command: ["windows", "--skip-pack"]
+    networks:
+      - game-network
+
+volumes:
+  mysql_data:
+
+networks:
+  game-network:
+    driver: bridge

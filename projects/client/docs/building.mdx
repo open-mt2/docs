@@ -5,136 +5,332 @@ sidebar_position: 3
 
 # Building
 
-The client is built inside the [devkit](https://github.com/open-mt2/devkit)
-Docker image. The image provides the Linux toolchain, the MinGW-w64 cross
-toolchain, Wine, Python 2.7 and the vendored dependencies, so the host only
-needs Docker and Git. A Windows host, Visual Studio and the DirectX SDK are not
-required.
+The client is assembled from three consolidated repositories (`neoeter`,
+`neoeter-python` and `client`) by the
+[devkit](https://github.com/open-mt2/devkit). The devkit provides the
+toolchain, the build scripts and the vendored tree geometry cache. The
+recommended path is the published Docker image; a native toolchain is
+documented under [Manual installation](#manual-installation).
 
-## Requirements
+## Docker
 
-- [Docker](https://docs.docker.com/get-docker/) with BuildKit (the default)
-- Git
-- Python 3, for the devkit unit tests and `scripts/dist-diff.py`
+The devkit image is published to GHCR on every release tag, so you no longer
+need to build it. The image contains the toolchain, the sources and
+`treecache/`; it does not contain the proprietary `bin/` assets, the pack
+archives or `dist/`.
 
-## Build the image
+### Requirements
+
+- Docker Engine 20.10+ with BuildKit, or Docker Desktop
+- No other host packages are required
+- On macOS and Windows, Docker Desktop provides the Linux engine. The published
+  image is `linux/amd64`, so Apple Silicon runs it through emulation
+- The commands below use POSIX shell syntax (`$PWD`, `$(id -u)`). On Windows,
+  use the [Docker Compose](#docker-compose) stack or run them from WSL2
+
+### Pull the image
 
 ```bash
-git clone https://github.com/open-mt2/devkit.git
-cd devkit
-docker build -f dockerfile -t openmt2/client .
+docker pull ghcr.io/open-mt2/client:latest
 ```
 
-The default image fetches the client assets (~2.3 GB) and the SpeedTree baker.
-For a code-only image:
+`docker run` pulls the image automatically. Pin a release tag such as
+`ghcr.io/open-mt2/client:v0.1.2` for reproducible builds; `latest` follows the
+newest release.
+
+### Build the Linux client
 
 ```bash
-docker build -f dockerfile \
-  --build-arg WITH_BIN=0 \
-  --build-arg BAKE_TREES=0 \
-  -t openmt2/client:slim .
-```
-
-## Linux build
-
-With no arguments the entrypoint runs `build.sh`, compiles the client and
-assembles `dist/`:
-
-```bash
-docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  -v "$PWD/src:/workspace/src" \
+mkdir -p build dist
+docker run --rm \
+  --user "$(id -u):$(id -g)" -e HOME=/tmp \
   -v "$PWD/build:/workspace/build" \
   -v "$PWD/dist:/workspace/dist" \
-  openmt2/client -t --skip-pack
+  ghcr.io/open-mt2/client:latest build
 ```
 
-`-t` runs the CTest suite and `--skip-pack` skips re-zipping the asset archives
-during iterative work. The package contains `metin2client`, the bundled
-runtime (`runtime/` plus the CPython 2.7 standard library in `lib/`), the asset
-directories and `pack/*.zip`.
+The `build` command runs `build.sh`, compiles the client and assembles `dist/`.
+The image already contains `src/`, so only the output directories need to be
+mounted. To compile a local checkout instead, add
+`-v "$PWD/src:/workspace/src"`; the workspace must contain `src/neoeter`,
+`src/neoeter-python` and `src/client` (see
+[Prepare the sources](#prepare-the-sources)).
 
-## Windows cross-build
+Options are passed through to `build.sh`:
+
+| Option                    | Purpose                                             |
+| ------------------------- | --------------------------------------------------- |
+| `--clean`                 | Rebuild from scratch (removes `build/` and `dist/`) |
+| `--skip-pack`             | Skip re-zipping `bin/pack/*` (faster iteration)     |
+| `-b, --build-type <TYPE>` | `Release` (default), `Debug`, `RelWithDebInfo`      |
+| `-j, --jobs <N>`          | Parallel build jobs                                 |
+
+`dist/` contains `metin2client`, `config`, the bundled runtime (`runtime/` with
+`libzip.so.4` and `libpython2.7.so.1.0`), the CPython 2.7 standard library
+(`lib/`), the asset directories, `treecache/` and `pack/*.zip`. Run it with:
+
+```bash
+cd dist && ./metin2client
+```
+
+### Build the Windows client
 
 The same image cross-compiles the x86_64 client with MinGW-w64:
 
 ```bash
-docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  -v "$PWD/src:/workspace/src" \
+mkdir -p build dist-windows
+docker run --rm \
+  --user "$(id -u):$(id -g)" -e HOME=/tmp \
+  -v "$PWD/build:/workspace/build" \
+  -e OPENMT2_DIST_DIR=/workspace/dist-windows \
+  -v "$PWD/dist-windows:/workspace/dist-windows" \
+  ghcr.io/open-mt2/client:latest windows
+```
+
+The Windows package mirrors the Linux one and adds `metin2client.exe`,
+`config.exe` and the runtime DLLs (`python27.dll`, `msvcr90.dll`,
+`libstdc++-6.dll`, `libgcc_s_seh-1.dll`). SDL2 is linked statically. Keep the
+DLLs next to the executable when copying `dist-windows/` to a Windows machine.
+
+To build both targets side by side, run the two commands above: the Linux
+build writes `dist/` and the Windows build writes `dist-windows/`. The trees
+should differ only by the executable, the platform runtime libraries and the
+platform extension modules.
+
+### Fetch the client assets
+
+The published image is source-only: it is built with `WITH_BIN=0` and has no
+`bin/` tree. The client still compiles without assets, but `dist/` will be
+missing `BGM/`, `lib/`, `mark/`, `miles/`, `pack/`, `screenshot/` and
+`upload/`.
+
+Provide the assets in one of these ways:
+
+- Mount an existing checkout:
+
+  ```bash
+  mkdir -p bin build dist
+  docker run --rm \
+    --user "$(id -u):$(id -g)" -e HOME=/tmp \
+    -v "$PWD/bin:/workspace/bin" \
+    -v "$PWD/build:/workspace/build" \
+    -v "$PWD/dist:/workspace/dist" \
+    ghcr.io/open-mt2/client:latest build
+  ```
+
+- Fetch them into `bin/` with the `fetch` command:
+
+  ```bash
+  docker run --rm -it \
+    -e BIN_ARCHIVE_URL="https://example.com/bin.tar.gz" \
+    -v "$PWD/bin:/workspace/bin" \
+    ghcr.io/open-mt2/client:latest fetch
+  ```
+
+`fetch` refreshes the sources and then runs `scripts/fetch-bin.sh`. It accepts
+`BIN_LOCAL_SOURCE`, `BIN_ARCHIVE_URL`, `BIN_REPO_URL`, `BIN_REF`,
+`BIN_GIT_USERNAME`/`BIN_GIT_TOKEN` (or `GITEA_USER`/`GITEA_TOKEN`) for the
+old-metin2 Gitea, and `BIN_REQUIRED=1` to fail instead of warning when no
+assets are found.
+
+### Interactive shell
+
+```bash
+mkdir -p build dist
+docker run --rm -it \
+  --user "$(id -u):$(id -g)" -e HOME=/tmp \
   -v "$PWD/build:/workspace/build" \
   -v "$PWD/dist:/workspace/dist" \
-  openmt2/client windows
+  ghcr.io/open-mt2/client:latest shell
 ```
 
-The Windows package mirrors the Linux one and adds `metin2client.exe` and its
-runtime DLLs (`python27.dll`, `msvcr90.dll`, `libstdc++-6.dll`,
-`libgcc_s_seh-1.dll`). SDL2 is linked statically. Keep the runtime DLLs next to
-the executable when copying `dist/` to a Windows machine.
+The image's sources and `treecache/` are available under `/workspace`. Add
+`-v "$PWD/src:/workspace/src"` to edit a local checkout inside the shell.
 
-## Build both targets and compare
+### Docker Compose
+
+The homepage quickstart uses the compose file from this site:
 
 ```bash
-# Linux -> dist-linux/
-docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  -e OPENMT2_DIST_DIR=/workspace/dist-linux \
-  -v "$PWD/src:/workspace/src" \
-  -v "$PWD/build:/workspace/build" \
-  -v "$PWD/dist-linux:/workspace/dist-linux" \
-  openmt2/client --skip-pack
-
-# Windows -> dist-windows/
-docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp \
-  -e OPENMT2_DIST_DIR=/workspace/dist-windows \
-  -v "$PWD/src:/workspace/src" \
-  -v "$PWD/build:/workspace/build" \
-  -v "$PWD/dist-windows:/workspace/dist-windows" \
-  openmt2/client windows --skip-pack
-
-python3 scripts/dist-diff.py dist-linux dist-windows
+curl -o docker-compose.yml https://open-mt2.github.io/docs/install/docker-compose.yml
+docker compose up -d
+docker compose --profile build run --rm client
+docker compose --profile build run --rm client-windows
 ```
 
-`dist-diff.py` fails on unexpected differences. The two trees must differ only
-by the executable, the platform runtime libraries and the platform extension
-modules.
+The stack starts MySQL (`db`) and the game server, then builds the Linux client
+into `dist/` and the Windows client into `dist-windows/`. The compose file
+pulls `ghcr.io/open-mt2/client:latest`; set `MYSQL_ROOT_PASSWORD` and
+`MYSQL_PASSWORD` in the environment or a `.env` file as needed.
 
-## Smoke test
+### Rebuild the image (optional)
 
-`scripts/smoke.sh` boots a packaged tree under Xvfb (and Wine for the Windows
-build), waits for the login screen, captures a screenshot and fails on crashes,
-fatal `syserr.txt` entries or a blank screen. Run it inside the devkit image;
-use `--dist` when the two trees were built side by side:
+Only devkit maintainers need this. The client image is a thin layer over the
+toolchain base `ghcr.io/open-mt2/devkit-base:bookworm`, which is built and
+published manually:
 
 ```bash
-scripts/smoke.sh linux   --dist dist-linux
-scripts/smoke.sh windows --dist dist-windows
+git clone https://github.com/open-mt2/devkit.git
+cd devkit
+docker build -f dockerfile.base -t ghcr.io/open-mt2/devkit-base:bookworm .
+docker build -f dockerfile -t openmt2/client .
 ```
 
-## Tests and checks
+The base package is private. Building it locally as shown above avoids the
+pull; otherwise log in to GHCR with a token that has `read:packages` first.
+Build arguments for `dockerfile`:
 
-| Check | Command |
-| --- | --- |
-| Devkit unit tests | `python3 -m unittest discover -s tests -p 'test_*.py' -v` |
-| Client CTest suite | `docker run … openmt2/client -t --skip-pack` |
-| Golden baselines | `scripts/golden-check.sh` |
-| Fixed-function matrix | `scripts/feature-matrix.sh --check` |
-| Coverage ratchet | `docker run … openmt2/client coverage --check` |
-| Fuzz targets | `scripts/fuzz-smoke.sh` |
+| Argument              | Default                                 | Purpose                                |
+| --------------------- | --------------------------------------- | -------------------------------------- |
+| `DEVKIT_BASE`         | `ghcr.io/open-mt2/devkit-base:bookworm` | Toolchain base image                   |
+| `SRC_ORG` / `SRC_REF` | `open-mt2` / `main`                     | Source organization and branch         |
+| `WITH_BIN`            | `1`                                     | Fetch the `bin/` assets into the image |
+| `BIN_REF`             | `master`                                | Branch used for `bin/`                 |
+| `BIN_REPO_URL`        | old-metin2 Gitea                        | Alternative asset repository           |
+| `BIN_ARCHIVE_URL`     | empty                                   | Optional asset archive                 |
+| `BIN_REQUIRED`        | `0`                                     | Fail when no assets can be fetched     |
+| `SRC_CACHE_BUST`      | `0`                                     | Invalidate the source layer            |
 
-`golden-check.sh` and `feature-matrix.sh` expect a prepared workspace with
-`src/` materialized. See the devkit readme for the exact container mounts.
+For a code-only image, set `--build-arg WITH_BIN=0`. The tree geometry cache is
+vendored, so there is no SpeedTree, Wine or `BAKE_TREES` stage.
 
-## Continuous integration
+## Manual installation
 
-Two devkit workflows run on release tags and on demand; ordinary pushes and
-pull requests do not rebuild the full image:
+Docker is the supported path because it pins the exact compiler and library
+versions. The manual path mirrors the image: install the same packages, build
+Python 2.7 and miniaudio, prepare the workspace, then run the devkit scripts.
 
-- `parity` builds Linux and Windows, runs the devkit unit tests and the Linux
-  CTest suite, compares the two distributions and uploads both `dist/` trees.
-- `coverage` runs the per-module coverage ratchet and publishes the report.
+### System packages
+
+On Debian or Ubuntu, install the toolchain:
+
+```bash
+sudo apt-get update
+sudo apt-get install -y \
+  build-essential cmake ninja-build pkg-config git curl \
+  ca-certificates openssh-client xz-utils unzip \
+  zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev libffi-dev \
+  liblzo2-dev libjpeg-dev libsdl2-dev libfreetype-dev libgl-dev \
+  libegl-dev libglu1-mesa-dev libzip-dev libdevil-dev libasound2-dev \
+  python3 zip p7zip-full
+```
+
+For the Windows cross-build, add:
+
+```bash
+sudo apt-get install -y gcc-mingw-w64-x86-64 g++-mingw-w64-x86-64 msitools
+```
+
+`dockerfile.base` is the canonical list. Other distributions need the
+equivalent development packages.
+
+### Build Python 2.7
+
+```bash
+curl -fsSLO https://www.python.org/ftp/python/2.7.18/Python-2.7.18.tgz
+tar xf Python-2.7.18.tgz
+cd Python-2.7.18
+./configure --prefix=/usr/local --enable-shared --enable-unicode=ucs4 --with-ensurepip=no
+make -j"$(nproc)"
+sudo make altinstall
+echo /usr/local/lib | sudo tee /etc/ld.so.conf.d/python2.7.conf
+sudo ldconfig
+python2.7 --version
+```
+
+### Build miniaudio
+
+```bash
+MINIAUDIO_VERSION=0.11.25
+sudo mkdir -p /usr/local/include/miniaudio /usr/local/lib/pkgconfig
+sudo curl -fsSL \
+  "https://raw.githubusercontent.com/mackron/miniaudio/${MINIAUDIO_VERSION}/miniaudio.h" \
+  -o /usr/local/include/miniaudio/miniaudio.h
+printf '#define MINIAUDIO_IMPLEMENTATION\n#include <miniaudio/miniaudio.h>\n' > /tmp/miniaudio.c
+cc -O2 -fPIC -I/usr/local/include -c /tmp/miniaudio.c -o /tmp/miniaudio.o
+sudo ar rcs /usr/local/lib/libminiaudio.a /tmp/miniaudio.o
+sudo tee /usr/local/lib/pkgconfig/miniaudio.pc >/dev/null <<'EOF'
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: miniaudio
+Description: Single-file audio playback and capture library
+Version: 0.11.25
+Cflags: -I${includedir}
+Libs: -L${libdir} -lminiaudio
+Libs.private: -lpthread -ldl -lm
+EOF
+sudo ldconfig
+```
+
+### Prepare the sources
+
+```bash
+git clone https://github.com/open-mt2/devkit.git
+cd devkit
+./scripts/fetch-sources.sh .
+```
+
+`fetch-sources.sh` clones `neoeter`, `neoeter-python` and `client` into `src/`.
+The Docker image also copies the top-level CMake files from `docker/root/`; do
+the same for a native build:
+
+```bash
+cp docker/root/CMakeLists.txt .
+mkdir -p cmake
+cp docker/root/cmake/Platform.cmake cmake/
+```
+
+### Fetch the assets
+
+```bash
+./scripts/fetch-bin.sh .
+```
+
+`fetch-bin.sh` uses an existing `bin/`, `BIN_LOCAL_SOURCE`,
+`BIN_ARCHIVE_URL` or a sparse clone of the old-metin2 Gitea repository. The
+same environment variables as the Docker `fetch` command apply.
+
+### Compile the Linux client
+
+```bash
+./scripts/build.sh --skip-pack
+```
+
+`scripts/build.sh` configures CMake, builds the client and assembles `dist/`
+next to the devkit checkout. Use `--clean` for a clean build, `-j N` to control
+parallelism and `--build-type Debug` for a debug build. Omit `--skip-pack` to
+regenerate the `pack/*.zip` archives.
+
+### Cross-build the Windows client
+
+Build the Windows dependency prefix and the Python runtime once:
+
+```bash
+sudo ./scripts/build-windows-deps.sh --prefix /opt/openmt2/win64
+sudo ./scripts/fetch-windows-python.sh --prefix /opt/openmt2/win64
+```
+
+Then run the cross-build:
+
+```bash
+./scripts/build-windows.sh
+```
+
+Set `OPENMT2_WIN64_DEPS_PREFIX` if you installed the prefix somewhere other
+than `/opt/openmt2/win64`, and `OPENMT2_DIST_DIR` to write to a different
+directory (for example `dist-windows`).
+
+### Tree geometry cache
+
+`treecache/` is vendored in the devkit and copied into `dist/treecache/` by the
+build scripts. Regenerating it is only needed when adding or editing trees and
+requires [speedtreebkr](https://github.com/open-mt2/speedtreebkr); see
+[`treecache/README.md`](https://github.com/open-mt2/devkit/blob/main/treecache/README.md).
 
 ## Related links
 
 - [Devkit readme](https://github.com/open-mt2/devkit#readme)
-- [Windows/Linux parity plan](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity.md)
-- [Parity task sheet](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity-tasks.md)
-- [Client packages](./packages)
-- [Windows parity status](./parity)
+- [Tree geometry cache](https://github.com/open-mt2/devkit/blob/main/treecache/README.md)
