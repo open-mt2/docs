@@ -133,6 +133,15 @@ const config: Config = {
     [
       "@docusaurus/plugin-content-docs",
       {
+        id: "neoeter-python",
+        path: "projects/neoeter-python/docs",
+        routeBasePath: "neoeter-python",
+        sidebarPath: "./projects/neoeter-python/sidebars.ts",
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
         id: "other-projects",
         path: "projects/other-projects/docs",
         routeBasePath: "other-projects",
@@ -202,6 +211,10 @@ const config: Config = {
             {
               label: "Neoeter",
               to: "/neoeter/",
+            },
+            {
+              label: "Neoeter Python",
+              to: "/neoeter-python/",
             },
             {
               label: "Other Projects",

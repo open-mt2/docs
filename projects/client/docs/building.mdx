@@ -198,7 +198,7 @@ vendored, so there is no SpeedTree, Wine or `BAKE_TREES` stage.
 
 Docker is the supported path because it pins the exact compiler and library
 versions. The manual path mirrors the image: install the same packages, build
-Python 2.7 and miniaudio, prepare the workspace, then run the devkit scripts.
+Python 2.7, prepare the workspace, then run the devkit scripts.
 
 ### System packages
 
@@ -236,33 +236,6 @@ sudo make altinstall
 echo /usr/local/lib | sudo tee /etc/ld.so.conf.d/python2.7.conf
 sudo ldconfig
 python2.7 --version
-```
-
-### Build miniaudio
-
-```bash
-MINIAUDIO_VERSION=0.11.25
-sudo mkdir -p /usr/local/include/miniaudio /usr/local/lib/pkgconfig
-sudo curl -fsSL \
-  "https://raw.githubusercontent.com/mackron/miniaudio/${MINIAUDIO_VERSION}/miniaudio.h" \
-  -o /usr/local/include/miniaudio/miniaudio.h
-printf '#define MINIAUDIO_IMPLEMENTATION\n#include <miniaudio/miniaudio.h>\n' > /tmp/miniaudio.c
-cc -O2 -fPIC -I/usr/local/include -c /tmp/miniaudio.c -o /tmp/miniaudio.o
-sudo ar rcs /usr/local/lib/libminiaudio.a /tmp/miniaudio.o
-sudo tee /usr/local/lib/pkgconfig/miniaudio.pc >/dev/null <<'EOF'
-prefix=/usr/local
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
-
-Name: miniaudio
-Description: Single-file audio playback and capture library
-Version: 0.11.25
-Cflags: -I${includedir}
-Libs: -L${libdir} -lminiaudio
-Libs.private: -lpthread -ldl -lm
-EOF
-sudo ldconfig
 ```
 
 ### Prepare the sources

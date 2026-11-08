@@ -5,35 +5,20 @@ sidebar_position: 1
 
 # Neoeter
 
-Neoeter is the planned home for the refactored Eter engine packages. The goal is
-to replace the 16-repository client layout with three repositories that match
-the dependency layers, while preserving history and keeping the current include
-paths and target names working through temporary shims.
+Neoeter is the engine of the OpenMT2 client: platform, I/O, image, render,
+audio, model, terrain and effects. The client and the Python bridge consume it
+through the `Neoeter::*` CMake targets and `<Neoeter/...>` headers.
 
-## Planned repositories
+## In this section
 
-| Repository | Contents |
-| --- | --- |
-| `neoeter` | Engine layers L0–L3: platform, I/O, image, render, audio, model, terrain and effects |
-| `neoeter-python` | Python bridge: `scriptlib` and `eterpythonlib` |
-| `client` | Game layer: `gamelib` and `userinterface` |
-
-The consolidation is a move-only refactor: no behaviour, naming or formatting
-changes in the move commits. The target is the same output on both platforms
-and the same test and golden baselines before and after.
-
-:::note
-
-This is not started yet. The 16 `pkg_*` repositories are still the source of
-truth, and the devkit parity work continues against them. The plan and task
-breakdown live in the devkit's
-[Windows/Linux parity plan](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity.md)
-and [task sheet](https://github.com/open-mt2/devkit/blob/main/docs/planning/windows-parity-tasks.md).
-
-:::
+- [Architecture](./architecture.md)
+- [C ABI](./abi.md)
+- [Script hosts](./scripting-hosts.md)
 
 ## Related links
 
 - [Client introduction](/client/)
+- [Neoeter Python](/neoeter-python/)
+- [Source repository](https://github.com/open-mt2/neoeter)
 - [OpenMT2 repositories](https://github.com/orgs/open-mt2/repositories)
 - [Documentation issue tracker](https://github.com/open-mt2/docs/issues)
