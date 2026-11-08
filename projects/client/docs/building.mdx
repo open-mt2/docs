@@ -31,11 +31,11 @@ archives or `dist/`.
 ### Pull the image
 
 ```bash
-docker pull ghcr.io/open-mt2/client:latest
+docker pull ghcr.io/open-mt2/devkit:latest
 ```
 
 `docker run` pulls the image automatically. Pin a release tag such as
-`ghcr.io/open-mt2/client:v0.1.2` for reproducible builds; `latest` follows the
+`ghcr.io/open-mt2/devkit:v0.1.6` for reproducible builds; `latest` follows the
 newest release.
 
 ### Build the Linux client
@@ -46,7 +46,7 @@ docker run --rm \
   --user "$(id -u):$(id -g)" -e HOME=/tmp \
   -v "$PWD/build:/workspace/build" \
   -v "$PWD/dist:/workspace/dist" \
-  ghcr.io/open-mt2/client:latest build
+  ghcr.io/open-mt2/devkit:latest build
 ```
 
 The `build` command runs `build.sh`, compiles the client and assembles `dist/`.
@@ -84,7 +84,7 @@ docker run --rm \
   -v "$PWD/build:/workspace/build" \
   -e OPENMT2_DIST_DIR=/workspace/dist-windows \
   -v "$PWD/dist-windows:/workspace/dist-windows" \
-  ghcr.io/open-mt2/client:latest windows
+  ghcr.io/open-mt2/devkit:latest windows
 ```
 
 The Windows package mirrors the Linux one and adds `metin2client.exe`,
@@ -115,7 +115,7 @@ Provide the assets in one of these ways:
     -v "$PWD/bin:/workspace/bin" \
     -v "$PWD/build:/workspace/build" \
     -v "$PWD/dist:/workspace/dist" \
-    ghcr.io/open-mt2/client:latest build
+    ghcr.io/open-mt2/devkit:latest build
   ```
 
 - Fetch them into `bin/` with the `fetch` command:
@@ -124,7 +124,7 @@ Provide the assets in one of these ways:
   docker run --rm -it \
     -e BIN_ARCHIVE_URL="https://example.com/bin.tar.gz" \
     -v "$PWD/bin:/workspace/bin" \
-    ghcr.io/open-mt2/client:latest fetch
+    ghcr.io/open-mt2/devkit:latest fetch
   ```
 
 `fetch` refreshes the sources and then runs `scripts/fetch-bin.sh`. It accepts
@@ -141,7 +141,7 @@ docker run --rm -it \
   --user "$(id -u):$(id -g)" -e HOME=/tmp \
   -v "$PWD/build:/workspace/build" \
   -v "$PWD/dist:/workspace/dist" \
-  ghcr.io/open-mt2/client:latest shell
+  ghcr.io/open-mt2/devkit:latest shell
 ```
 
 The image's sources and `treecache/` are available under `/workspace`. Add
@@ -160,7 +160,7 @@ docker compose --profile build run --rm client-windows
 
 The stack starts MySQL (`db`) and the game server, then builds the Linux client
 into `dist/` and the Windows client into `dist-windows/`. The compose file
-pulls `ghcr.io/open-mt2/client:latest`; set `MYSQL_ROOT_PASSWORD` and
+pulls `ghcr.io/open-mt2/devkit:latest`; set `MYSQL_ROOT_PASSWORD` and
 `MYSQL_PASSWORD` in the environment or a `.env` file as needed.
 
 ### Rebuild the image (optional)
@@ -173,7 +173,7 @@ published manually:
 git clone https://github.com/open-mt2/devkit.git
 cd devkit
 docker build -f dockerfile.base -t ghcr.io/open-mt2/devkit-base:bookworm .
-docker build -f dockerfile -t openmt2/client .
+docker build -f dockerfile -t openmt2/devkit .
 ```
 
 The base package is private. Building it locally as shown above avoids the

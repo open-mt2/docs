@@ -166,7 +166,7 @@ services:
         condition: service_healthy
 
   client:
-    image: ghcr.io/open-mt2/client:latest
+    image: ghcr.io/open-mt2/devkit:latest
     environment:
       GIT_CONFIG_COUNT: "1"
       GIT_CONFIG_KEY_0: safe.directory
