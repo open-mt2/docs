@@ -174,4 +174,5 @@ services:
     volumes:
       - ./src:/workspace/src
       - ./bin:/workspace/bin
+      - ./build:/workspace/build
       - ./client:/workspace/dist
