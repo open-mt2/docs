@@ -12,13 +12,15 @@ application that turns content into a running client.
 
 | Directory | Responsibility |
 |---|---|
+| `src/application` | bootstrap, command line, game session, pack loading, platform and Python runtimes |
 | `src/game` | item/race/skill tables, network packet structs, game-side data managers |
-| `src/ui` | application loop, scene setup, the 28 Python game modules, `metin2client` |
+| `src/ui` | the Python game modules, scene setup and the UI layer |
+| `src/utils` | shared Python helper utilities |
 | `src/webbrowser` | no-op stub keeping the UI's web-page entry points linkable |
 
-Include roots: `<Client/Game/...>`, `<Client/UI/...>`,
-`<Client/WebBrowser/...>`. Engine headers are `<Neoeter/...>`; the Python bridge
-is `<Neoeter/Python/...>`.
+Include roots: `<Client/Application/...>`, `<Client/Game/...>`,
+`<Client/UI/...>`, `<Client/Utils/...>`, `<Client/WebBrowser/...>`. Engine
+headers are `<Neoeter/...>`; the Python bridge is `<Neoeter/Python/...>`.
 
 ## Dependency boundaries
 
@@ -48,6 +50,7 @@ provenance and licenses; keeping them apart is deliberate.
 
 ## Executable
 
-`src/ui` defines the `metin2client` target, built from `src/ui/UserInterface.cpp`.
-The devkit pins its binary directory to `build/src/ui`, which is what the build
-scripts and the dist assembly use.
+The root project defines the `openmt2` target from `src/Main.cpp`; the target is
+declared in `src/ui/CMakeLists.txt` and links `Client::Application`. The binary
+is written to `build/openmt2`, which is what the devkit build scripts and the
+dist assembly use.

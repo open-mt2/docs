@@ -167,7 +167,7 @@ export default function ClientArchitecture(): ReactNode {
           fontSize="12"
           opacity="0.7"
         >
-          metin2client · game/UI
+          openmt2 · application
         </text>
 
         {/* Python bridge */}

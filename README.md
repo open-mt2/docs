@@ -73,11 +73,13 @@ in `docusaurus.config.ts` and add it to the Projects menu.
 
 ## Keeping content current
 
-The client pages mirror the current devkit commands and parity state. When a
-devkit change alters a build command, a check, a workflow or the parity status,
-update `projects/client/docs/building.mdx` and `parity.mdx` in the same change
-window. Link to the devkit's plan and task sheet rather than copying detailed
-task state, so this site does not become a second, stale source of truth.
+The client pages mirror the current devkit commands and the shipped compose
+stack. When a devkit or client change alters a build command, a build option, a
+workflow or the packaging layout, update
+`projects/client/docs/building.mdx` and
+`projects/client/docs/architecture.md` in the same change window. Link to the
+devkit readme rather than copying detailed task state, so this site does not
+become a second, stale source of truth.
 
 Validate content before pushing:
 

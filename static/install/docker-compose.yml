@@ -167,6 +167,7 @@ services:
 
   client:
     image: ghcr.io/open-mt2/devkit:latest
+    profiles: ["build"]
     environment:
       GIT_CONFIG_COUNT: "1"
       GIT_CONFIG_KEY_0: safe.directory

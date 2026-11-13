@@ -58,19 +58,20 @@ mounted. To compile a local checkout instead, add
 
 Options are passed through to `build.sh`:
 
-| Option                    | Purpose                                             |
-| ------------------------- | --------------------------------------------------- |
-| `--clean`                 | Rebuild from scratch (removes `build/` and `dist/`) |
-| `--skip-pack`             | Skip re-zipping `bin/pack/*` (faster iteration)     |
-| `-b, --build-type <TYPE>` | `Release` (default), `Debug`, `RelWithDebInfo`      |
-| `-j, --jobs <N>`          | Parallel build jobs                                 |
+| Option                     | Purpose                                                            |
+| -------------------------- | ------------------------------------------------------------------ |
+| `--clean`                  | Rebuild from scratch (removes `build/` and `dist/`)                |
+| `--neoeter-prefix <PATH>`  | Build against an installed Neoeter package instead of `src/neoeter` |
+| `--skip-pack`              | Skip re-zipping `bin/pack/*` (faster iteration)                    |
+| `-b, --build-type <TYPE>`  | `Release` (default), `Debug`, `RelWithDebInfo`                     |
+| `-j, --jobs <N>`           | Parallel build jobs                                                |
 
-`dist/` contains `metin2client`, `config`, the bundled runtime (`runtime/` with
+`dist/` contains `openmt2`, the bundled runtime (`runtime/` with
 `libzip.so.4` and `libpython2.7.so.1.0`), the CPython 2.7 standard library
 (`lib/`), the asset directories, `treecache/` and `pack/*.zip`. Run it with:
 
 ```bash
-cd dist && ./metin2client
+cd dist && ./openmt2
 ```
 
 ### Build the Windows client
@@ -87,10 +88,13 @@ docker run --rm \
   ghcr.io/open-mt2/devkit:latest windows
 ```
 
-The Windows package mirrors the Linux one and adds `metin2client.exe`,
-`config.exe` and the runtime DLLs (`python27.dll`, `msvcr90.dll`,
-`libstdc++-6.dll`, `libgcc_s_seh-1.dll`). SDL2 is linked statically. Keep the
-DLLs next to the executable when copying `dist-windows/` to a Windows machine.
+The Windows package mirrors the Linux one and adds `openmt2.exe` and the
+runtime DLLs (`python27.dll`, `msvcr90.dll`, `libstdc++-6.dll`,
+`libgcc_s_seh-1.dll`). SDL2 is linked statically. Keep the DLLs next to the
+executable when copying `dist-windows/` to a Windows machine.
+
+The `windows` command accepts `--clean`, `--skip-pack` and `-j, --jobs <N>`,
+and writes to `$OPENMT2_DIST_DIR` (default `/workspace/dist`).
 
 To build both targets side by side, run the two commands above: the Linux
 build writes `dist/` and the Windows build writes `dist-windows/`. The trees
@@ -133,6 +137,36 @@ Provide the assets in one of these ways:
 old-metin2 Gitea, and `BIN_REQUIRED=1` to fail instead of warning when no
 assets are found.
 
+The source half accepts `--ref REPO=REF` (repeatable; `REPO` is `client`,
+`neoeter` or `neoeter-python`) and `--write-lock FILE`, which records the
+resolved commit hashes:
+
+```bash
+docker run --rm -v "$PWD/src:/workspace/src" \
+  ghcr.io/open-mt2/devkit:latest fetch \
+  --ref client=v0.1.6 --ref neoeter=v0.1.6 \
+  --write-lock src/sources.lock
+```
+
+Refs can be branches, tags or full commit hashes. The same pins can be set
+with `SRC_REF_CLIENT`, `SRC_REF_NEOETER` and `SRC_REF_NEOETER_PYTHON`;
+`SRC_REF` remains the default for every repository.
+
+### Repack the assets
+
+`pack` rebuilds `dist/pack/<name>.zip` from the unpacked directories in
+`bin/pack` without running a full build. With no names it regenerates every
+archive listed in `bin/pack/Index`; with names it replaces only those archives.
+Names are matched case-insensitively, and an entry that is not in `Index` is an
+error.
+
+```bash
+docker run --rm \
+  -v "$PWD/bin/pack:/workspace/bin/pack" \
+  -v "$PWD/dist:/workspace/dist" \
+  ghcr.io/open-mt2/devkit:latest pack ETC
+```
+
 ### Interactive shell
 
 ```bash
@@ -154,14 +188,18 @@ The homepage quickstart uses the compose file from this site:
 ```bash
 curl -o docker-compose.yml https://open-mt2.github.io/docs/install/docker-compose.yml
 docker compose up -d
-docker compose --profile build run --rm client
-docker compose --profile build run --rm client-windows
+docker compose --profile build run --rm client fetch
+docker compose --profile build run --rm client build
+docker compose --profile build run --rm client windows
 ```
 
-The stack starts MySQL (`db`) and the game server, then builds the Linux client
-into `dist/` and the Windows client into `dist-windows/`. The compose file
-pulls `ghcr.io/open-mt2/devkit:latest`; set `MYSQL_ROOT_PASSWORD` and
-`MYSQL_PASSWORD` in the environment or a `.env` file as needed.
+The stack starts MySQL (`mysql`) and the game services. The `client` service is
+behind the `build` profile, so `docker compose up -d` does not start it. Its
+build output is written to `./client`, which compose mounts as
+`/workspace/dist`; `./src`, `./bin` and `./build` are mounted as well. The
+compose file pulls `ghcr.io/open-mt2/devkit:latest`; set `MYSQL_PASSWORD` (and
+optionally `MYSQL_EXTERNAL_PORT`) in the environment or a `.env` file as
+needed.
 
 ### Rebuild the image (optional)
 
@@ -302,6 +340,23 @@ directory (for example `dist-windows`).
 build scripts. Regenerating it is only needed when adding or editing trees and
 requires [speedtreebkr](https://github.com/open-mt2/speedtreebkr); see
 [`treecache/README.md`](https://github.com/open-mt2/devkit/blob/main/treecache/README.md).
+
+## Standalone client build
+
+The `client` repository also builds on its own, without the devkit scripts:
+
+```bash
+cmake -S . -B build -G Ninja
+cmake --build build --parallel
+```
+
+With no options this downloads the latest Neoeter release and fetches
+`neoeter-python` from source. Set `NEOETER_VERSION` to pin a release,
+`CLIENT_DOWNLOAD_NEOETER=OFF` to build Neoeter from source, or
+`CLIENT_STANDALONE=OFF` when a parent project provides the engine. The build
+writes `build/openmt2`; it does not assemble `dist/` or fetch the game assets.
+See the [client readme](https://github.com/open-mt2/client#readme) for the full
+option list.
 
 ## Related links
 
