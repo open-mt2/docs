@@ -59,8 +59,10 @@ if [[ -d "$output_dir/html" ]]; then
   rmdir "$output_dir/html"
 fi
 
-if [[ -f "$output_dir/index.htm" ]]; then
-  cp "$output_dir/index.htm" "$output_dir/index.html"
+if [[ ! -f "$output_dir/index.htm" ]]; then
+  echo "error: Doxygen produced no index.htm in $output_dir" >&2
+  exit 1
 fi
 
+cp "$output_dir/index.htm" "$output_dir/index.html"
 echo "C++ API written to $output_dir/index.html"

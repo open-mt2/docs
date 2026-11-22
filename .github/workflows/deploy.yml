@@ -44,9 +44,12 @@ jobs:
         run: npm run build
 
       - name: Generate C++ API
-        run: ./tools/build-api.sh
+        run: bash tools/build-api.sh
         env:
           CLIENT_DIR: ${{ github.workspace }}/client
+
+      - name: Verify C++ API output
+        run: test -f build/client/api/index.html
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

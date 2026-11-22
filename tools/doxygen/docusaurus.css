@@ -202,12 +202,12 @@ pre.fragment {
 }
 
 /* Hide the redundant project row at the top of the Doxygen tree. */
-#nav-tree-contents > ul > li > .item {
+#nav-tree-contents > ul > li:first-child > .item {
   display: none;
 }
 
-#nav-tree-contents > ul > li > .children_ul > li > .item > a > .arrow,
-#nav-tree-contents > ul > li > .children_ul > li > .item > .arrow {
+#nav-tree-contents > ul > li:first-child > .children_ul > li > .item > a > .arrow,
+#nav-tree-contents > ul > li:first-child > .children_ul > li > .item > .arrow {
   padding-left: 0 !important;
 }
 

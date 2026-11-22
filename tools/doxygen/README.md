@@ -2,11 +2,11 @@
 
 The client reference is generated from a client checkout with Doxygen and
 mounted at `/client/api/` under the Docusaurus site. The Client docs sidebar
-links directly to it. `tools/build-api.sh` is a post-build step: run
-`npm run build` first, then generate the API into `build/client/api/`.
+has a small C++ API page that opens it. `tools/build-api.sh` is a post-build
+step: run `npm run build` first, then generate the API into `build/client/api/`.
 
-The sidebar link and the in-page return link assume `baseUrl: "/docs/"`.
-Update both if the site moves to a different base path.
+The in-page return link assumes `baseUrl: "/docs/"`. The C++ API page uses
+`useBaseUrl`, so only the return link needs updating if the base path changes.
 
 The pages use `.htm` because Docusaurus `serve` rewrites `.html` URLs and drops
 the `/docs/` base, which breaks Doxygen's internal links locally. `.htm` is
