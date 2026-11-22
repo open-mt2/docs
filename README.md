@@ -26,6 +26,31 @@ npm run build
 
 The output is written to `build/`.
 
+## C++ API
+
+The client C++ reference is generated from the `client` repository and served
+at `/client/api/`. It is linked from the Client docs sidebar. It is generated
+into `build/` after the site build and is not committed.
+
+```bash
+npm run build:site
+```
+
+This runs `npm run build` and then `npm run api:build`. The script expects
+`../client` next to this repository, or a `CLIENT_DIR` environment variable
+pointing at a client checkout. Set `DOXYGEN_BIN` if `doxygen` is not on `PATH`.
+In CI the client repository is checked out into `client/` and `CLIENT_DIR` is
+set by the workflow.
+
+For a full local preview, including the API:
+
+```bash
+npm run preview
+```
+
+Open <http://localhost:3000/docs/client/> and use the **C++ API** sidebar entry.
+The dev server (`npm start`) does not serve the post-build API.
+
 ## Preview a production build
 
 ```bash
@@ -61,7 +86,9 @@ change `url` to the domain and `baseUrl` to `/` in `docusaurus.config.ts`.
 | `projects/*/sidebars.ts`       | Sidebar configuration for each project       |
 | `blog/`                        | News and project updates                     |
 | `src/css/custom.css`           | Global theme and color tokens                |
-| `src/pages/`                   | Homepage                                     |
+| `src/pages/`                   | Homepage and client API placeholder          |
+| `tools/build-api.sh`           | Generates the client C++ API into `build/`   |
+| `tools/doxygen/`               | Doxygen config, theme and API landing page   |
 | `static/img/logo.svg`          | Full logo used on the homepage               |
 | `static/img/favicon.svg`       | Ring mark used in the navbar and browser tab |
 | `static/img/logo-wordmark.svg` | Alternative wordmark asset                   |

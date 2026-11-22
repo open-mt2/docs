@@ -1,0 +1,63 @@
+PROJECT_NAME           = "OpenMT2 API Reference"
+PROJECT_BRIEF          = "OpenMT2 Client"
+OUTPUT_DIRECTORY       = @OUTPUT_DIR@
+
+INPUT                  = @CLIENT_DIR@/include \
+                         @CLIENT_DIR@/src \
+                         @DOXYGEN_DIR@/mainpage.md
+USE_MDFILE_AS_MAINPAGE = @DOXYGEN_DIR@/mainpage.md
+RECURSIVE              = YES
+FILE_PATTERNS          = *.h *.hpp *.c *.cc *.cpp
+EXCLUDE                = @CLIENT_DIR@/build \
+                         @CLIENT_DIR@/.cache \
+                         @CLIENT_DIR@/dist
+EXCLUDE_PATTERNS       = */tests/* \
+                         */build/* \
+                         */.cache/* \
+                         */dist/* \
+                         */ui/assets/*
+STRIP_FROM_PATH        = @CLIENT_DIR@
+
+ENABLE_PREPROCESSING   = YES
+MACRO_EXPANSION        = NO
+SEARCH_INCLUDES        = NO
+SKIP_FUNCTION_MACROS   = YES
+PREDEFINED             = OPENMT2_PLATFORM_LINUX=1 \
+                         OPENMT2_RENDERER_GL=1 \
+                         OPENMT2_SDL_WINDOW=1
+
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = NO
+REFERENCED_BY_RELATION = NO
+REFERENCES_RELATION    = NO
+
+GENERATE_HTML          = YES
+GENERATE_TREEVIEW      = YES
+GENERATE_LATEX         = NO
+HAVE_DOT               = NO
+
+# Doxygen Awesome + the Docusaurus token port.
+HTML_COLORSTYLE        = LIGHT
+HTML_COLORSTYLE_HUE    = 0
+HTML_COLORSTYLE_SAT    = 200
+HTML_COLORSTYLE_GAMMA  = 113
+FULL_SIDEBAR           = NO
+DISABLE_INDEX          = NO
+HTML_EXTRA_STYLESHEET  = @DOXYGEN_DIR@/theme/doxygen-awesome.css \
+                         @DOXYGEN_DIR@/theme/doxygen-awesome-sidebar-only.css \
+                         @DOXYGEN_DIR@/theme/doxygen-awesome-sidebar-only-darkmode-toggle.css
+HTML_EXTRA_FILES       = @DOXYGEN_DIR@/theme/doxygen-awesome-darkmode-toggle.js \
+                         @DOXYGEN_DIR@/theme/doxygen-awesome-fragment-copy-button.js \
+                         @DOXYGEN_DIR@/theme/doxygen-awesome-paragraph-link.js \
+                         @DOXYGEN_DIR@/docusaurus.css
+HTML_HEADER            = @DOXYGEN_DIR@/header.html
+HTML_COPY_CLIPBOARD    = NO
+HTML_OUTPUT            = html
+HTML_FILE_EXTENSION    = .htm
+
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_DOC_ERROR      = YES
+QUIET                  = NO

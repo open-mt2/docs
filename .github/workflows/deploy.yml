@@ -22,6 +22,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Checkout client
+        uses: actions/checkout@v4
+        with:
+          repository: open-mt2/client
+          path: client
+
+      - name: Install Doxygen
+        run: sudo apt-get update && sudo apt-get install -y doxygen
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -33,6 +42,11 @@ jobs:
 
       - name: Build site
         run: npm run build
+
+      - name: Generate C++ API
+        run: ./tools/build-api.sh
+        env:
+          CLIENT_DIR: ${{ github.workspace }}/client
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

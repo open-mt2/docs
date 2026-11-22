@@ -1,0 +1,279 @@
+/*
+ * OpenMT2 Docusaurus theme, ported to Doxygen Awesome.
+ *
+ * Only the design tokens are ported: palette, typography, radii, surfaces,
+ * code colours and dark mode. The Docusaurus navbar/sidebar markup is not
+ * recreated; Doxygen keeps its own layout.
+ *
+ * Light-mode values mirror docs/src/css/custom.css :root.
+ * Dark-mode values mirror [data-theme='dark'].
+ */
+
+html {
+  --primary-color: #c0342f;
+  --primary-dark-color: #a32c28;
+  --primary-light-color: #d54944;
+  --on-primary-color: #ffffff;
+  --link-color: #b02e2a;
+
+  --page-background-color: #fffdfd;
+  --page-foreground-color: #2a1e1d;
+  --page-secondary-foreground-color: #6e5a58;
+  --separator-color: #ecd9d6;
+
+  --border-radius-large: 12px;
+  --border-radius-medium: 8px;
+  --border-radius-small: 6px;
+
+  --box-shadow: 0 1px 2px rgba(60, 20, 18, 0.04),
+    0 12px 32px -14px rgba(60, 20, 18, 0.16);
+  --odd-color: rgba(192, 52, 47, 0.035);
+
+  --font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  --font-family-monospace: "JetBrains Mono", "SFMono-Regular", Menlo, Monaco,
+    Consolas, "Liberation Mono", monospace;
+
+  --page-font-size: 16px;
+  --content-line-height: 1.6;
+
+  --tablehead-background: rgba(192, 52, 47, 0.055);
+  --tablehead-foreground: var(--page-foreground-color);
+
+  --side-nav-background: #faf3f2;
+  --side-nav-foreground: var(--page-foreground-color);
+  --menu-selected-background: rgba(192, 52, 47, 0.09);
+  --menu-focus-background: var(--primary-color);
+  --menu-focus-foreground: #ffffff;
+
+  --searchbar-background: var(--side-nav-background);
+  --searchbar-foreground: var(--page-foreground-color);
+
+  --header-background: #fffdfd;
+  --header-foreground: var(--page-foreground-color);
+
+  --code-background: #f8efee;
+  --code-foreground: #3b2a29;
+  --section-code-background: rgba(192, 52, 47, 0.07);
+  --section-code-border: rgba(192, 52, 47, 0.18);
+
+  --fragment-background: #fbf1f0;
+  --fragment-foreground: #3b2a29;
+  --fragment-keyword: #be123c;
+  --fragment-keywordtype: #a21caf;
+  --fragment-keywordflow: #9f1239;
+  --fragment-token: #0f766e;
+  --fragment-comment: #9a807d;
+  --fragment-link: #b02e2a;
+  --fragment-preprocessor: #b45309;
+  --fragment-linenumber-color: #9a807d;
+  --fragment-linenumber-background: #f2e7e5;
+  --fragment-linenumber-border: #e6d5d2;
+
+  --warning-color: #fff4e5;
+  --warning-color-dark: #b45309;
+  --warning-color-darker: #5f4204;
+  --note-color: #fdeceb;
+  --note-color-dark: #c0342f;
+  --note-color-darker: #4a0f0d;
+  --deprecated-color: #f2e7e5;
+  --deprecated-color-dark: #8c7673;
+  --deprecated-color-darker: #483633;
+  --bug-color: #fdeceb;
+  --bug-color-dark: #c0342f;
+  --bug-color-darker: #4a0f0d;
+  --invariant-color: #e6f4ec;
+  --invariant-color-dark: #0f766e;
+  --invariant-color-darker: #0b4f4a;
+
+  --blockquote-background: rgba(192, 52, 47, 0.055);
+  --blockquote-foreground: #5c4846;
+
+  --webkit-scrollbar-color: #d8c2bf;
+}
+
+html.dark-mode {
+  color-scheme: dark;
+
+  --primary-color: #ff6b6b;
+  --primary-dark-color: #ff4f4f;
+  --primary-light-color: #ff9797;
+  --on-primary-color: #ffffff;
+  --link-color: #ff8b8b;
+
+  --page-background-color: #151011;
+  --page-foreground-color: #ece4e3;
+  --page-secondary-foreground-color: #b8a5a3;
+  --separator-color: #3a2b2b;
+
+  --box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03),
+    0 18px 40px -20px rgba(0, 0, 0, 0.8);
+  --odd-color: rgba(255, 255, 255, 0.03);
+
+  --tablehead-background: rgba(255, 107, 107, 0.07);
+  --tablehead-foreground: var(--page-foreground-color);
+
+  --side-nav-background: #1d1617;
+  --side-nav-foreground: var(--page-foreground-color);
+  --menu-selected-background: rgba(255, 107, 107, 0.12);
+  --menu-focus-background: var(--primary-color);
+  --menu-focus-foreground: #1a1112;
+
+  --searchbar-background: var(--side-nav-background);
+  --searchbar-foreground: var(--page-foreground-color);
+
+  --header-background: #151011;
+  --header-foreground: var(--page-foreground-color);
+
+  --code-background: rgba(255, 107, 107, 0.09);
+  --code-foreground: var(--page-foreground-color);
+  --section-code-background: rgba(255, 107, 107, 0.12);
+  --section-code-border: rgba(255, 107, 107, 0.28);
+
+  --fragment-background: #1a1112;
+  --fragment-foreground: #e9dedd;
+  --fragment-keyword: #ff5c5c;
+  --fragment-keywordtype: #f0a6ff;
+  --fragment-keywordflow: #ff9db0;
+  --fragment-token: #7ee0c3;
+  --fragment-comment: #8f7370;
+  --fragment-link: #ff8b8b;
+  --fragment-preprocessor: #ffb86b;
+  --fragment-linenumber-color: #8f7370;
+  --fragment-linenumber-background: #211818;
+  --fragment-linenumber-border: #3a2b2b;
+
+  --warning-color: #3a2410;
+  --warning-color-dark: #ffb86b;
+  --warning-color-darker: #ffe0b2;
+  --note-color: #3a1414;
+  --note-color-dark: #ff8b8b;
+  --note-color-darker: #ffe3e3;
+  --deprecated-color: #332626;
+  --deprecated-color-dark: #a89492;
+  --deprecated-color-darker: #e0d3d2;
+  --bug-color: #3a1414;
+  --bug-color-dark: #ff6b6b;
+  --bug-color-darker: #ffe3e3;
+  --invariant-color: #133a2e;
+  --invariant-color-dark: #7ee0c3;
+  --invariant-color-darker: #d8f1e3;
+
+  --blockquote-background: rgba(255, 107, 107, 0.075);
+  --blockquote-foreground: #cbb8b6;
+
+  --webkit-scrollbar-color: #4b3938;
+}
+
+/* Docusaurus-like surfaces and interaction details. */
+
+body {
+  background: var(--page-background-color);
+  font-family: var(--font-family);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.02em;
+  font-weight: 700;
+}
+
+a {
+  color: var(--link-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+div.fragment,
+pre.fragment {
+  border: 1px solid var(--separator-color);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--box-shadow);
+}
+
+#side-nav {
+  border-right: 1px solid var(--separator-color);
+}
+
+/* Hide the redundant project row at the top of the Doxygen tree. */
+#nav-tree-contents > ul > li > .item {
+  display: none;
+}
+
+#nav-tree-contents > ul > li > .children_ul > li > .item > a > .arrow,
+#nav-tree-contents > ul > li > .children_ul > li > .item > .arrow {
+  padding-left: 0 !important;
+}
+
+#MSearchBox {
+  border: 1px solid var(--separator-color);
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+#MSearchField {
+  background: transparent;
+}
+
+table.doxtable th {
+  background: var(--tablehead-background);
+}
+
+table.doxtable tr:nth-child(even) {
+  background: var(--odd-color);
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: rgba(192, 52, 47, 0.22);
+}
+
+html.dark-mode ::selection {
+  background: rgba(255, 107, 107, 0.28);
+}
+
+/* Plain "Back to docs" link in the title area, above the search. */
+#titlearea {
+  position: relative;
+}
+
+.back-to-docs {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  background: transparent;
+  color: var(--page-secondary-foreground-color);
+  font-size: var(--toc-font-size);
+  font-weight: 500;
+  line-height: 1.5;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+#titlearea .back-to-docs {
+  position: absolute;
+  right: 16px;
+  bottom: 6px;
+  z-index: 1;
+}
+
+a.back-to-docs:link,
+a.back-to-docs:visited {
+  color: var(--page-secondary-foreground-color) !important;
+}
+
+.back-to-docs:hover {
+  background: transparent;
+  color: var(--primary-color) !important;
+  text-decoration: underline;
+}
